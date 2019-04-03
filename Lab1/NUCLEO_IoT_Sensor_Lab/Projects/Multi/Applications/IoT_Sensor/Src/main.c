@@ -224,6 +224,13 @@ int main(void)
   /* Set output power level */
   ret = aci_hal_set_tx_power_level(1,4);
 
+  ret = Add_LED_Service();
+
+    if(ret == BLE_STATUS_SUCCESS)
+      PRINTF("LED Sensor service added successfully.\n");
+    else
+      PRINTF("Error while adding LED Sensor service.\n");
+
   while(1)
   {
     HCI_Process();

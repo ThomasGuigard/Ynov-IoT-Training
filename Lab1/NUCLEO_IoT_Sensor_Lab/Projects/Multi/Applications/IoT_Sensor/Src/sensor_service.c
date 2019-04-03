@@ -39,6 +39,7 @@
 #include "x_nucleo_iks01a2_accelero.h"
 #include "x_nucleo_iks01a2_humidity.h"
 #include "x_nucleo_iks01a2_temperature.h"
+#include "stm32l0xx_nucleo.h"
 
 /** @addtogroup X-CUBE-BLE1_Applications
  *  @{
@@ -70,6 +71,7 @@ void *TEMPERATURE_handle = NULL;
 static void Accelero_Sensor_Handler(SensorAxes_t *pAccelerometerAxes);
 static void Humidity_Sensor_Handler(int16_t *pHumidity);
 static void Temperature_Sensor_Handler(int16_t *pTemperature);
+static void Led_TypeDef;
 
 uint16_t ledServHandle, ledCharHandle;
 uint8_t ledState = 0;
@@ -94,6 +96,8 @@ do {\
 #define COPY_ENV_SENS_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0x04,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
 #define COPY_TEMP_CHAR_UUID(uuid_struct)         COPY_UUID_128(uuid_struct,0x05,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
 #define COPY_HUMIDITY_CHAR_UUID(uuid_struct)     COPY_UUID_128(uuid_struct,0x07,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+#define COPY_LED_SERVICE_UUID(uuid_struct)		 COPY_UUID_128(uuid_struct,0x0c,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x0b)
+#define COPY_LED_UUID(uuid_struct)				 COPY_UUID_128(uuid_struct,0x0c,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x0c)
 
 /* Store Value into a buffer in Little Endian Format */
 #define STORE_LE_16(buf, val)    ( ((buf)[0] =  (uint8_t) (val)    ) , \
@@ -115,6 +119,8 @@ do {\
     BSP_HUMIDITY_Init( HTS221_H_0, &HUMIDITY_handle );
     /* Force to use HTS221 */
     BSP_TEMPERATURE_Init( HTS221_T_0, &TEMPERATURE_handle );
+    /*Launch LED2*/
+    BSP_LED_Init(Led_TypeDef);
   }
 
   /**
@@ -223,13 +229,49 @@ fail:
   
 }
 
+tBleStatus Add_LED_Service(void){
+	tBleStatus ret;
+	  uint8_t uuid[16];
+	  uint16_t uuid16;
+	  charactFormat charFormat;
+	  uint16_t descHandle;
+
+	  COPY_LED_SERVICE_UUID(uuid);
+	  ret = aci_gatt_add_serv(UUID_TYPE_128,  uuid, PRIMARY_SERVICE, 10,
+	                          &envSensServHandle);
+	  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+	  uuid16 = CHAR_FORMAT_DESC_UUID;
+
+	  ret = aci_gatt_add_char_desc(envSensServHandle,
+	                               tempCharHandle,
+	                               UUID_TYPE_16,
+	                               (uint8_t *)&uuid16,
+	                               7,
+	                               7,
+	                               (void *)&charFormat,
+	                               ATTR_PERMISSION_NONE,
+								   ATTR_ACCESS_READ_WRITE,
+	                               0,
+	                               16,
+	                               FALSE,
+	                               &descHandle);
+	  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+	  return BLE_STATUS_SUCCESS;
+
+	fail:
+	  PRINTF("Error while adding ENV_SENS service.\n");
+	  return BLE_STATUS_ERROR ;
+}
+
 /**
  * @brief  Update temperature characteristic value.
  * @param  Temperature in tenths of degree 
  * @retval Status
  */
 tBleStatus Temp_Update(int16_t temp)
-{  
+{  l
   tBleStatus ret;
   
   ret = aci_gatt_update_char_value(envSensServHandle, tempCharHandle, 0, 2,
