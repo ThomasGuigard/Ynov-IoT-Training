@@ -329,6 +329,26 @@ tBleStatus Temp_Update(int16_t temp)
 	
 }
 
+/**
+ * @brief  Update temperature characteristic value.
+ * @param  Temperature in tenths of degree
+ * @retval Status
+ */
+tBleStatus Acc_Update(AxesRaw_t *data)
+{
+  tBleStatus ret;
+
+  ret = aci_gatt_update_char_value(envSensServHandle, tempCharHandle, 0, 2,
+                                   (uint8_t*)&*data);
+
+  if (ret != BLE_STATUS_SUCCESS){
+    PRINTF("Error while updating TEMP characteristic.\n") ;
+    return BLE_STATUS_ERROR ;
+  }
+  return BLE_STATUS_SUCCESS;
+
+}
+
 
 /**
  * @brief  Update humidity characteristic value.
@@ -435,6 +455,11 @@ void Read_Request_CB(uint16_t handle)
     int16_t data = 0;
     Humidity_Sensor_Handler(&data);
     Humidity_Update(data);
+  }
+  else if (){
+	  int16_t data = 0;
+	  Accelero_Sensor_Handler(&data);
+	  Acc_Update(data);
   }
   
   //EXIT:
@@ -562,6 +587,22 @@ static void Temperature_Sensor_Handler(int16_t *pTemperature)
   }
 }
 
+/**
+ * @brief  Handles the ACCELEROMETER sensor data getting/sending
+ * @param  Msg the ACCELEROMETER part of the stream
+ * @retval None
+ */
+static void Accelerometer_Sensor_Handler(int16_t *pAccelerometer)
+{
+  uint8_t status = 0;
+  float fValue;
+
+  if(BSP_ACCELERO_IsInitialized(ACCELERO_handle, &status) == COMPONENT_OK && status == 1)
+  {
+	  BSP_ACCELERO_Get_AxesRaw(ACCELERO_handle, &fValue);
+    *pAccelerometer = (int16_t)((fValue * 10) + 0.5);
+  }
+}
 
 
 
