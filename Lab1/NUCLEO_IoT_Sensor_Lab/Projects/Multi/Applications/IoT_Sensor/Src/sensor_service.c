@@ -115,6 +115,8 @@ do {\
     BSP_HUMIDITY_Init( HTS221_H_0, &HUMIDITY_handle );
     /* Force to use HTS221 */
     BSP_TEMPERATURE_Init( HTS221_T_0, &TEMPERATURE_handle );
+    BSP_ACCELRO_Init( ACCELERO_SENSORS_AUTO, &ACCELERO_handle );
+
   }
 
   /**
@@ -126,6 +128,7 @@ do {\
   {
     BSP_HUMIDITY_Sensor_Enable( HUMIDITY_handle );
     BSP_TEMPERATURE_Sensor_Enable( TEMPERATURE_handle );
+    BSP_ACCELERO_Sensor_Enable( ACCELERO_handle );
   }
 
 
