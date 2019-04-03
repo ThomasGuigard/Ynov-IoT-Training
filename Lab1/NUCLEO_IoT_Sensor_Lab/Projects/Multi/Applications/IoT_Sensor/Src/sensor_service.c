@@ -94,6 +94,9 @@ do {\
 #define COPY_ENV_SENS_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0x04,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
 #define COPY_TEMP_CHAR_UUID(uuid_struct)         COPY_UUID_128(uuid_struct,0x05,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
 #define COPY_HUMIDITY_CHAR_UUID(uuid_struct)     COPY_UUID_128(uuid_struct,0x07,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+#define COPY_ACC_SERVICE_UUID(uuid_struct)		 COPY_UUID_128(uuid_struct,0x1B,0xC5,0xD5,0xA5, 0x02,0x00, 0xB4,0x9A, 0xE1,0x11, 0x3A,0xCF,0x80,0x6E,0x36,0x01)
+#define COPY_ACC_UUID(uuid_struct)		         COPY_UUID_128(uuid_struct,0x1B,0xC5,0xD5,0xA5, 0x02,0x00, 0xB4,0x9A, 0xE1,0x11, 0x3A,0xCF,0x80,0x6E,0x36,0x03)
+
 
 /* Store Value into a buffer in Little Endian Format */
 #define STORE_LE_16(buf, val)    ( ((buf)[0] =  (uint8_t) (val)    ) , \
@@ -217,6 +220,8 @@ tBleStatus Add_Environmental_Sensor_Service(void)
                                  &descHandle);
     if (ret != BLE_STATUS_SUCCESS) goto fail;
   } 
+
+
   PRINTF("Service ENV_SENS added. Handle 0x%04X, TEMP Charac handle: 0x%04X, PRESS Charac handle: 0x%04X, HUMID Charac handle: 0x%04X\n",envSensServHandle, tempCharHandle, pressCharHandle, humidityCharHandle);	
   return BLE_STATUS_SUCCESS; 
   
@@ -224,6 +229,84 @@ fail:
   PRINTF("Error while adding ENV_SENS service.\n");
   return BLE_STATUS_ERROR ;
   
+}
+
+tBleStatus Add_Acc_Service(void)
+{
+  tBleStatus ret;
+  uint8_t uuid[16];
+  uint16_t uuid16;
+  charactFormat charFormat;
+  uint16_t descHandle;
+
+  /* Accelerator Characteristic */
+     COPY_ACC_SERVICE_UUID(uuid);
+     ret =  aci_gatt_add_char(accServHandle, UUID_TYPE_128, uuid, 2,
+                              CHAR_PROP_READ, ATTR_PERMISSION_NONE,
+                              GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
+                              16, 0, &accCharHandle);
+     if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+     charFormat.format = FORMAT_SINT16;
+     charFormat.exp = -1;
+     charFormat.unit = UNIT_UNITLESS;
+     charFormat.name_space = 0;
+     charFormat.desc = 0;
+
+     uuid16 = CHAR_FORMAT_DESC_UUID;
+
+     ret = aci_gatt_add_char_desc(accServHandle,
+                                  accCharHandle,
+                                  UUID_TYPE_16,
+                                  (uint8_t *)&uuid16,
+                                  7,
+                                  7,
+                                  (void *)&charFormat,
+                                  ATTR_PERMISSION_NONE,
+                                  ATTR_ACCESS_READ_ONLY,
+                                  0,
+                                  16,
+                                  FALSE,
+                                  &descHandle);
+     if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+     COPY_ACC_UUID(uuid);
+          ret =  aci_gatt_add_char(accServHandle, UUID_TYPE_128, uuid, 2,
+                                   CHAR_PROP_READ, ATTR_PERMISSION_NONE,
+                                   GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
+                                   16, 0, &accCharHandle);
+          if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+          charFormat.format = FORMAT_SINT16;
+          charFormat.exp = -1;
+          charFormat.unit = UNIT_UNITLESS;
+          charFormat.name_space = 0;
+          charFormat.desc = 0;
+
+          uuid16 = CHAR_FORMAT_DESC_UUID;
+
+          ret = aci_gatt_add_char_desc(accServHandle,
+                                       accCharHandle,
+                                       UUID_TYPE_16,
+                                       (uint8_t *)&uuid16,
+                                       7,
+                                       7,
+                                       (void *)&charFormat,
+                                       ATTR_PERMISSION_NONE,
+                                       ATTR_ACCESS_READ_ONLY,
+                                       0,
+                                       16,
+                                       FALSE,
+                                       &descHandle);
+          if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+
+   PRINTF("Service ACC_SERV added. Handle 0x%04X, PRESS Charac handle: 0x%04X\n",accServHandle);
+   return BLE_STATUS_SUCCESS;
+
+   fail:
+     PRINTF("Error while adding ENV_SENS service.\n");
+     return BLE_STATUS_ERROR ;
 }
 
 /**
