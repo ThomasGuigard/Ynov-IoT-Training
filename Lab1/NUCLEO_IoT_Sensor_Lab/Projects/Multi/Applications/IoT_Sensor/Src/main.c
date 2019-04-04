@@ -231,17 +231,13 @@ int main(void)
   else
     PRINTF("Error while adding Accelerometer Sensor service.\n");
 
-
-  /* Set output power level */
-  ret = aci_hal_set_tx_power_level(1,4);
-  PRINTF("function add_LED_service launched !");
   ret = Add_LED_Service();
 
-    if(ret == BLE_STATUS_SUCCESS)
-      PRINTF("LED Sensor service added successfully.\n");
-    else
-      PRINTF("Error while adding LED Sensor service.\n");
-  PRINTF("function add_LED_service launched !");
+	if(ret == BLE_STATUS_SUCCESS)
+	  PRINTF("LED Sensor service added successfully.\n");
+	else
+	  PRINTF("Error while adding LED Sensor service.\n");
+
   /* Set output power level */
   ret = aci_hal_set_tx_power_level(1,4);
   while(1)
