@@ -95,11 +95,11 @@ do {\
 #define COPY_ENV_SENS_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0x04,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
 #define COPY_TEMP_CHAR_UUID(uuid_struct)         COPY_UUID_128(uuid_struct,0x05,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
 #define COPY_HUMIDITY_CHAR_UUID(uuid_struct)     COPY_UUID_128(uuid_struct,0x07,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
-#define COPY_LED_SERVICE_UUID(uuid_struct)		 COPY_UUID_128(uuid_struct,0x0b,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
 #define COPY_LED_UUID(uuid_struct)				 COPY_UUID_128(uuid_struct,0x0c,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+#define COPY_ACC_SERVICE_UUID(uuid_struct)		 COPY_UUID_128(uuid_struct,0x1B,0xC5,0xD5,0xA5, 0x02,0x00, 0xB4,0x9A, 0xE1,0x11, 0x3A,0xCF,0x80,0x6E,0x36,0x01)
+
 
 /* Store Value into a buffer in Little Endian Format */
-#define STORE_LE_16(buf, val)    ( ((buf)[0] =  (uint8_t) (val)    ) , \
                                    ((buf)[1] =  (uint8_t) (val>>8) ) )
 /**
  * @}
@@ -118,6 +118,8 @@ do {\
     BSP_HUMIDITY_Init( HTS221_H_0, &HUMIDITY_handle );
     /* Force to use HTS221 */
     BSP_TEMPERATURE_Init( HTS221_T_0, &TEMPERATURE_handle );
+    BSP_ACCELERO_Init( HTS221_T_0, &ACCELERO_handle );
+
   }
 
   /**
@@ -129,6 +131,7 @@ do {\
   {
     BSP_HUMIDITY_Sensor_Enable( HUMIDITY_handle );
     BSP_TEMPERATURE_Sensor_Enable( TEMPERATURE_handle );
+    BSP_ACCELERO_Sensor_Enable( ACCELERO_handle );
   }
 
 
@@ -217,6 +220,8 @@ tBleStatus Add_Environmental_Sensor_Service(void)
                                  &descHandle);
     if (ret != BLE_STATUS_SUCCESS) goto fail;
   } 
+
+
   PRINTF("Service ENV_SENS added. Handle 0x%04X, TEMP Charac handle: 0x%04X, PRESS Charac handle: 0x%04X, HUMID Charac handle: 0x%04X\n",envSensServHandle, tempCharHandle, pressCharHandle, humidityCharHandle);	
   return BLE_STATUS_SUCCESS; 
   
@@ -224,6 +229,33 @@ fail:
   PRINTF("Error while adding ENV_SENS service.\n");
   return BLE_STATUS_ERROR ;
   
+}
+
+tBleStatus Add_Acc_Service(void)
+{
+  tBleStatus ret;
+  uint8_t uuid[16];
+  /* Accelerator Characteristic */
+     COPY_ACC_SERVICE_UUID(uuid);
+     ret = aci_gatt_add_serv(UUID_TYPE_128,  uuid, PRIMARY_SERVICE, 7,
+                              &accServHandle);
+     if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+
+     COPY_ACC_UUID(uuid);
+          ret =  aci_gatt_add_char(accServHandle, UUID_TYPE_128, uuid, 6,
+								  CHAR_PROP_READ,
+								  ATTR_PERMISSION_NONE,
+								  GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
+								  16, 0, &accCharHandle);
+          if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+   PRINTF("Service ACC_SERV added. Handle 0x%04X, PRESS Charac handle: 0x%04X, ACC charac handle 0x%04x\n",accServHandle, freeFallCharHandle, accCharHandle);
+   return BLE_STATUS_SUCCESS;
+
+   fail:
+     PRINTF("Error while adding ENV_SENS service.\n");
+     return BLE_STATUS_ERROR ;
 }
 
 /**
@@ -244,6 +276,31 @@ tBleStatus Temp_Update(int16_t temp)
   }
   return BLE_STATUS_SUCCESS;
 	
+}
+
+/**
+ * @brief  Update accelero characteristic value.
+ * @param  axes
+ * @retval Status
+ */
+tBleStatus Acc_Update(AxesRaw_t *data)
+{
+  tBleStatus ret;
+
+  uint8_t buff[6];
+  STORE_LE_16(buff,data->AXIS_X);
+  STORE_LE_16(buff+2,data->AXIS_Y);
+  STORE_LE_16(buff+4,data->AXIS_Z);
+
+  ret = aci_gatt_update_char_value(accServHandle, accCharHandle, 0, 6,
+                                   buff);
+
+  if (ret != BLE_STATUS_SUCCESS){
+    PRINTF("Error while updating ACC characteristic.\n") ;
+    return BLE_STATUS_ERROR ;
+  }
+  return BLE_STATUS_SUCCESS;
+
 }
 
 
@@ -374,6 +431,10 @@ void Read_Request_CB(uint16_t handle)
   }
   else if(handle == ledCharHandle + 1){
     LedState_Update(ledState);
+  } else if (handle == accCharHandle + 1){
+	  SensorAxes_t data = {0};
+	  Accelero_Sensor_Handler(&data);
+	  Acc_Update((AxesRaw_t*)&data);
   }
   
   //EXIT:
@@ -558,6 +619,20 @@ static void Temperature_Sensor_Handler(int16_t *pTemperature)
   }
 }
 
+/**
+ * @brief  Handles the ACCELEROMETER sensor data getting/sending
+ * @param  Msg the ACCELEROMETER part of the stream
+ * @retval None
+ */
+static void Accelero_Sensor_Handler(SensorAxes_t *pAccelerometer)
+{
+  uint8_t status = 0;
+
+  if(BSP_ACCELERO_IsInitialized(ACCELERO_handle, &status) == COMPONENT_OK && status == 1)
+  {
+	  BSP_ACCELERO_Get_Axes(ACCELERO_handle, pAccelerometer);
+  }
+}
 
 
 

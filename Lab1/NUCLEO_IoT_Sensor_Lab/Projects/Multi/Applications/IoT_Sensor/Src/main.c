@@ -224,6 +224,14 @@ int main(void)
   else
     PRINTF("Error while adding Environmental Sensor service.\n");
 
+  ret = Add_Acc_Service();
+
+  if(ret == BLE_STATUS_SUCCESS)
+    PRINTF("Accelerometer service added successfully.\n");
+  else
+    PRINTF("Error while adding Accelerometer Sensor service.\n");
+
+
   /* Set output power level */
   ret = aci_hal_set_tx_power_level(1,4);
   PRINTF("function add_LED_service launched !");
