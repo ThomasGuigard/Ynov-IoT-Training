@@ -126,6 +126,9 @@ int main(void)
    */
   HAL_Init();
 
+  /* Configure LED2 */
+  BSP_LED_Init(LED2);
+
   /* Configure the system clock */
   SystemClock_Config();
 
@@ -223,14 +226,16 @@ int main(void)
 
   /* Set output power level */
   ret = aci_hal_set_tx_power_level(1,4);
-
+  PRINTF("function add_LED_service launched !");
   ret = Add_LED_Service();
 
     if(ret == BLE_STATUS_SUCCESS)
       PRINTF("LED Sensor service added successfully.\n");
     else
       PRINTF("Error while adding LED Sensor service.\n");
-
+  PRINTF("function add_LED_service launched !");
+  /* Set output power level */
+  ret = aci_hal_set_tx_power_level(1,4);
   while(1)
   {
     HCI_Process();
