@@ -118,7 +118,7 @@ do {\
     BSP_HUMIDITY_Init( HTS221_H_0, &HUMIDITY_handle );
     /* Force to use HTS221 */
     BSP_TEMPERATURE_Init( HTS221_T_0, &TEMPERATURE_handle );
-    BSP_ACCELRO_Init( ACCELERO_SENSORS_AUTO, &ACCELERO_handle );
+    BSP_ACCELERO_Init( HTS221_T_0, &ACCELERO_handle );
 
   }
 
@@ -235,73 +235,22 @@ tBleStatus Add_Acc_Service(void)
 {
   tBleStatus ret;
   uint8_t uuid[16];
-  uint16_t uuid16;
-  charactFormat charFormat;
-  uint16_t descHandle;
-
   /* Accelerator Characteristic */
      COPY_ACC_SERVICE_UUID(uuid);
-     ret =  aci_gatt_add_char(accServHandle, UUID_TYPE_128, uuid, 2,
-                              CHAR_PROP_READ, ATTR_PERMISSION_NONE,
-                              GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
-                              16, 0, &accCharHandle);
+     ret = aci_gatt_add_serv(UUID_TYPE_128,  uuid, PRIMARY_SERVICE, 7,
+                              &accServHandle);
      if (ret != BLE_STATUS_SUCCESS) goto fail;
 
-     charFormat.format = FORMAT_SINT16;
-     charFormat.exp = -1;
-     charFormat.unit = UNIT_UNITLESS;
-     charFormat.name_space = 0;
-     charFormat.desc = 0;
-
-     uuid16 = CHAR_FORMAT_DESC_UUID;
-
-     ret = aci_gatt_add_char_desc(accServHandle,
-                                  accCharHandle,
-                                  UUID_TYPE_16,
-                                  (uint8_t *)&uuid16,
-                                  7,
-                                  7,
-                                  (void *)&charFormat,
-                                  ATTR_PERMISSION_NONE,
-                                  ATTR_ACCESS_READ_ONLY,
-                                  0,
-                                  16,
-                                  FALSE,
-                                  &descHandle);
-     if (ret != BLE_STATUS_SUCCESS) goto fail;
 
      COPY_ACC_UUID(uuid);
-          ret =  aci_gatt_add_char(accServHandle, UUID_TYPE_128, uuid, 2,
-                                   CHAR_PROP_READ, ATTR_PERMISSION_NONE,
-                                   GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
-                                   16, 0, &accCharHandle);
+          ret =  aci_gatt_add_char(accServHandle, UUID_TYPE_128, uuid, 6,
+								  CHAR_PROP_READ,
+								  ATTR_PERMISSION_NONE,
+								  GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
+								  16, 0, &accCharHandle);
           if (ret != BLE_STATUS_SUCCESS) goto fail;
 
-          charFormat.format = FORMAT_SINT16;
-          charFormat.exp = -1;
-          charFormat.unit = UNIT_UNITLESS;
-          charFormat.name_space = 0;
-          charFormat.desc = 0;
-
-          uuid16 = CHAR_FORMAT_DESC_UUID;
-
-          ret = aci_gatt_add_char_desc(accServHandle,
-                                       accCharHandle,
-                                       UUID_TYPE_16,
-                                       (uint8_t *)&uuid16,
-                                       7,
-                                       7,
-                                       (void *)&charFormat,
-                                       ATTR_PERMISSION_NONE,
-                                       ATTR_ACCESS_READ_ONLY,
-                                       0,
-                                       16,
-                                       FALSE,
-                                       &descHandle);
-          if (ret != BLE_STATUS_SUCCESS) goto fail;
-
-
-   PRINTF("Service ACC_SERV added. Handle 0x%04X, PRESS Charac handle: 0x%04X\n",accServHandle);
+   PRINTF("Service ACC_SERV added. Handle 0x%04X, PRESS Charac handle: 0x%04X, ACC charac handle 0x%04x\n",accServHandle, freeFallCharHandle, accCharHandle);
    return BLE_STATUS_SUCCESS;
 
    fail:
@@ -330,19 +279,24 @@ tBleStatus Temp_Update(int16_t temp)
 }
 
 /**
- * @brief  Update temperature characteristic value.
- * @param  Temperature in tenths of degree
+ * @brief  Update accelero characteristic value.
+ * @param  axes
  * @retval Status
  */
 tBleStatus Acc_Update(AxesRaw_t *data)
 {
   tBleStatus ret;
 
-  ret = aci_gatt_update_char_value(envSensServHandle, tempCharHandle, 0, 2,
-                                   (uint8_t*)&*data);
+  uint8_t buff[6];
+  STORE_LE_16(buff,data->AXIS_X);
+  STORE_LE_16(buff+2,data->AXIS_Y);
+  STORE_LE_16(buff+4,data->AXIS_Z);
+
+  ret = aci_gatt_update_char_value(accServHandle, accCharHandle, 0, 6,
+                                   buff);
 
   if (ret != BLE_STATUS_SUCCESS){
-    PRINTF("Error while updating TEMP characteristic.\n") ;
+    PRINTF("Error while updating ACC characteristic.\n") ;
     return BLE_STATUS_ERROR ;
   }
   return BLE_STATUS_SUCCESS;
@@ -456,10 +410,10 @@ void Read_Request_CB(uint16_t handle)
     Humidity_Sensor_Handler(&data);
     Humidity_Update(data);
   }
-  else if (){
-	  int16_t data = 0;
+  else if (handle == accCharHandle + 1){
+	  SensorAxes_t data = {0};
 	  Accelero_Sensor_Handler(&data);
-	  Acc_Update(data);
+	  Acc_Update((AxesRaw_t*)&data);
   }
   
   //EXIT:
@@ -592,15 +546,13 @@ static void Temperature_Sensor_Handler(int16_t *pTemperature)
  * @param  Msg the ACCELEROMETER part of the stream
  * @retval None
  */
-static void Accelerometer_Sensor_Handler(int16_t *pAccelerometer)
+static void Accelero_Sensor_Handler(SensorAxes_t *pAccelerometer)
 {
   uint8_t status = 0;
-  float fValue;
 
   if(BSP_ACCELERO_IsInitialized(ACCELERO_handle, &status) == COMPONENT_OK && status == 1)
   {
-	  BSP_ACCELERO_Get_AxesRaw(ACCELERO_handle, &fValue);
-    *pAccelerometer = (int16_t)((fValue * 10) + 0.5);
+	  BSP_ACCELERO_Get_Axes(ACCELERO_handle, pAccelerometer);
   }
 }
 
