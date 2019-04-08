@@ -94,8 +94,10 @@ do {\
 #define COPY_ENV_SENS_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0x04,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
 #define COPY_TEMP_CHAR_UUID(uuid_struct)         COPY_UUID_128(uuid_struct,0x05,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
 #define COPY_HUMIDITY_CHAR_UUID(uuid_struct)     COPY_UUID_128(uuid_struct,0x07,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+#define COPY_LED_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0x0b,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+#define COPY_LED_UUID(uuid_struct)				 COPY_UUID_128(uuid_struct,0x0c,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
 #define COPY_ACC_SERVICE_UUID(uuid_struct)		 COPY_UUID_128(uuid_struct,0x1B,0xC5,0xD5,0xA5, 0x02,0x00, 0xB4,0x9A, 0xE1,0x11, 0x3A,0xCF,0x80,0x6E,0x36,0x01)
-#define COPY_ACC_UUID(uuid_struct)		         COPY_UUID_128(uuid_struct,0x1B,0xC5,0xD5,0xA5, 0x02,0x00, 0xB4,0x9A, 0xE1,0x11, 0x3A,0xCF,0x80,0x6E,0x36,0x03)
+#define COPY_ACC_UUID(uuid_struct)          COPY_UUID_128(uuid_struct,0x03,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
 
 
 /* Store Value into a buffer in Little Endian Format */
@@ -264,7 +266,7 @@ tBleStatus Add_Acc_Service(void)
  * @retval Status
  */
 tBleStatus Temp_Update(int16_t temp)
-{  
+{
   tBleStatus ret;
   
   ret = aci_gatt_update_char_value(envSensServHandle, tempCharHandle, 0, 2,
@@ -318,6 +320,25 @@ tBleStatus Humidity_Update(uint16_t humidity)
   
   if (ret != BLE_STATUS_SUCCESS){
     PRINTF("Error while updating TEMP characteristic.\n") ;
+    return BLE_STATUS_ERROR ;
+  }
+  return BLE_STATUS_SUCCESS;
+}
+
+/**
+ * @brief  Update LED state characteristic value.
+ *
+ * @param  Structure containing led state
+ * @retval Status
+ */
+tBleStatus LedState_Update(uint8_t ledState)
+{
+  tBleStatus ret;
+
+  ret = aci_gatt_update_char_value(ledServHandle, ledCharHandle, 0, 1, &ledState);
+
+  if (ret != BLE_STATUS_SUCCESS){
+    PRINTF("Error while updating LED characteristic.\n") ;
     return BLE_STATUS_ERROR ;
   }
   return BLE_STATUS_SUCCESS;
@@ -410,7 +431,9 @@ void Read_Request_CB(uint16_t handle)
     Humidity_Sensor_Handler(&data);
     Humidity_Update(data);
   }
-  else if (handle == accCharHandle + 1){
+  else if(handle == ledCharHandle + 1){
+    LedState_Update(ledState);
+  } else if (handle == accCharHandle + 1){
 	  SensorAxes_t data = {0};
 	  Accelero_Sensor_Handler(&data);
 	  Acc_Update((AxesRaw_t*)&data);
@@ -492,6 +515,52 @@ void HCI_Event_CB(void *pckt)
   }    
 }
 
+/*
+ * @brief  Add LED service using a vendor specific profile.
+ * @param  None
+ * @retval Status
+ */
+tBleStatus Add_LED_Service(void)
+{
+  tBleStatus ret;
+  uint8_t uuid[16];
+
+  /* copy "LED service UUID" defined above to 'uuid' local variable */
+  COPY_LED_SERVICE_UUID(uuid);
+  /*
+   * now add "LED service" to GATT server, service handle is returned
+   * via 'ledServHandle' parameter of aci_gatt_add_serv() API.
+   * Please refer to 'BlueNRG Application Command Interface.pdf' for detailed
+   * API description
+  */
+  ret = aci_gatt_add_serv(UUID_TYPE_128, uuid, PRIMARY_SERVICE, 7,
+                          &ledServHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  /* copy "LED characteristic UUID" defined above to 'uuid' local variable */
+  COPY_LED_UUID(uuid);
+  /*
+   * now add "LED characteristic" to LED service, characteristic handle
+   * is returned via 'ledCharHandle' parameter of aci_gatt_add_char() API.
+   * This characteristic is writable, as specified by 'CHAR_PROP_WRITE' parameter.
+   * Please refer to 'BlueNRG Application Command Interface.pdf' for detailed
+   * API description
+  */
+  ret =  aci_gatt_add_char(ledServHandle, UUID_TYPE_128, uuid, 4,
+                           CHAR_PROP_WRITE | CHAR_PROP_WRITE_WITHOUT_RESP | CHAR_PROP_READ,
+						   ATTR_PERMISSION_NONE,
+						   GATT_NOTIFY_ATTRIBUTE_WRITE,
+                           16, 1, &ledCharHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  PRINTF("Service LED added. Handle 0x%04X, LED Charac handle: 0x%04X\n",ledServHandle, ledCharHandle);
+  return BLE_STATUS_SUCCESS;
+
+fail:
+  PRINTF("Error while adding LED service.\n");
+  return BLE_STATUS_ERROR;
+}
+
 
 /**
  * @brief  This function is called attribute value corresponding to 
@@ -503,6 +572,17 @@ void HCI_Event_CB(void *pckt)
  */
 void Attribute_Modified_CB(uint16_t handle, uint8_t data_length, uint8_t *att_data)
 {
+  /* If GATT client has modified 'LED characteristic' value, apply to LED2 */
+  if(handle == ledCharHandle + 1){
+
+	  if(data_length == sizeof(ledState))
+	  {
+		  // Save LedState
+		  ledState = *att_data;
+
+		  (ledState != 0) ? BSP_LED_On(LED2) : BSP_LED_Off(LED2);
+	  }
+  }
 }
 
 
