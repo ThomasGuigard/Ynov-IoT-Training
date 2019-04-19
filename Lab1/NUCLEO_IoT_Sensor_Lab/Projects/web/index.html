@@ -106,7 +106,7 @@ and open the template in the editor.
                     init: function () {
                         //-- Humidity
                         var worker = this;
-                        worker.socketHum = new WebSocket("ws://localhost:1880/humidity");
+                        worker.socketHum = new WebSocket("ws://localhost:1880/hum");
                         worker.socketHum.onmessage = function (msg) {
                             var data = JSON.parse(msg.data);
                             $("#humidity").html(data.hum);
@@ -115,13 +115,18 @@ and open the template in the editor.
                         };
                         worker.drawPlotHum();
                         //-- LED
-                        worker.socketLed = new WebSocket("ws://localhost:1880/ledstatus");
+                        worker.socketLed = new WebSocket("ws://localhost:1880/ledStatus");
                         worker.socketLed.onmessage = function (msg) {
-                            var data = JSON.parse(msg.data);
-
+                            console.log(msg);
+                            var formatedMsg = msg.data.replace(/\\"/g,"'").replace(/"/g,"");
+                            console.log(formatedMsg);
+                            var data = JSON.parse(formatedMsg);
                             $('.led-status').hide();
                             $('.btn-switch').removeClass("disabled");
+                            console.log("après parse",data);
                             worker.ledStatus = parseInt(data.status);
+                            console.log("data parsed",JSON.parse(data));
+                            console.log(worker.ledStatus);
                             if (isNaN(worker.ledStatus)) {
                                 worker.ledStatus = ("true" === data.status) ? 1 : 0;
                             }
@@ -147,10 +152,11 @@ and open the template in the editor.
                         worker.socketTemp.onmessage = function (msg) {
                             worker.addTempData(JSON.parse(msg.data));
                             worker.drawPlotTemp();
+                            //console.log(msg);
                         };
                         worker.socketTemp.onopen = function () {
                             $.ajax({
-                                url: "http://127.0.0.1:1880/temp",
+                                url: "http://127.0.0.1:1880/temperature",
                                 dataType: "json",
                                 success: function (data) {
                                     for (var i = 0; i < data.length; i++) {
@@ -180,7 +186,7 @@ and open the template in the editor.
                         if (this.plotTemp) {
                             this.plotTemp.destroy();
                         }
-
+                        //console.log(this.datasTemp);
                         this.plotTemp = $.jqplot('chart1', [this.datasTemp], {
                             title: 'Temperature',
                             seriesDefaults: {
@@ -204,7 +210,7 @@ and open the template in the editor.
                             this.plotHum.destroy();
                             console.log("...");
                         }
-                        console.log(this.dataHum);
+                        //console.log(this.dataHum);
                         this.plotHum = $.jqplot('chart2', [[this.dataHum]], {
                             seriesDefaults: {
                                 renderer: $.jqplot.MeterGaugeRenderer,
