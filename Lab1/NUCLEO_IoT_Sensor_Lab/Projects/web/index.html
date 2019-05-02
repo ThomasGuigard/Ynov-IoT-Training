@@ -108,6 +108,7 @@ and open the template in the editor.
                         var worker = this;
                         worker.socketHum = new WebSocket("ws://localhost:1880/hum");
                         worker.socketHum.onmessage = function (msg) {
+                            //console.log("Humidité string : ",msg.data);
                             var data = JSON.parse(msg.data);
                             $("#humidity").html(data.hum);
                             worker.dataHum = parseInt(data.hum);
@@ -116,17 +117,19 @@ and open the template in the editor.
                         worker.drawPlotHum();
                         //-- LED
                         worker.socketLed = new WebSocket("ws://localhost:1880/ledStatus");
+                        var socketLedwrite = new WebSocket("ws://localhost:1880/getStatus");
                         worker.socketLed.onmessage = function (msg) {
-                            console.log(msg);
-                            var formatedMsg = msg.data.replace(/\\"/g,"'").replace(/"/g,"");
-                            console.log(formatedMsg);
+                            //console.log(msg.data);
+                            var formatedMsg = msg.data.replace(/"{/g,'{').replace(/}"/g,'}').replace(/\\"/g,'"');
+                            //console.log("après modif : ", formatedMsg);
                             var data = JSON.parse(formatedMsg);
                             $('.led-status').hide();
                             $('.btn-switch').removeClass("disabled");
-                            console.log("après parse",data);
-                            worker.ledStatus = parseInt(data.status);
-                            console.log("data parsed",JSON.parse(data));
-                            console.log(worker.ledStatus);
+                            //console.log("après parse",data);
+                            worker.ledStatus = parseInt(data.led.characteristics["0c366e80cf3a11e19ab40002a5d5c51b"].data[0]);
+                            //console.log(worker.ledStatus);
+                            //console.log("int parsed", parseInt(data.led.characteristics.data));
+                            //console.log(worker.ledStatus);
                             if (isNaN(worker.ledStatus)) {
                                 worker.ledStatus = ("true" === data.status) ? 1 : 0;
                             }
@@ -141,10 +144,15 @@ and open the template in the editor.
                             worker.socketLed.send(JSON.stringify({action: "getState"}));
                         };
                         $('.btn-switch').on('click', function () {
-                            worker.socketLed.send(JSON.stringify({
+                            console.log(JSON.stringify({
                                 action: "setState",
                                 status: !worker.ledStatus
                             }));
+                            socketLedwrite.send(JSON.stringify({
+                                action: "setState",
+                                status: !worker.ledStatus
+                            }));
+                            console.log("message sent");
                         });
 
                         //-- Temp
