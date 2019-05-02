@@ -1,0 +1,7 @@
+{
+  "name": "PimpMyCard",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}
