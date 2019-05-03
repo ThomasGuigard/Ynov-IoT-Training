@@ -1,7 +1,8 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      Tab One
+        <img src="assets/raspberry.png" style="height: 7%;width: 7%;display: inline;" />
+      Pimp My Card
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -14,7 +15,7 @@
             <ion-card>
               <ion-card-content>
                   <img src="assets/104-512.png"  />
-                  <ion-input type="text" [(ngModel)]="temp" style="left: 38%;"></ion-input>
+                  <ion-input type="text" [(ngModel)]="temp" style="text-align:center;"></ion-input>
               </ion-card-content>
             </ion-card>
       </ion-col>
@@ -22,7 +23,7 @@
           <ion-card>
             <ion-card-content>
                 <img src="assets/humidity-512.png"  />
-                <ion-input type="text"></ion-input>
+                <ion-input type="text" [(ngModel)]="humi"   style="text-align:center;"></ion-input>
             </ion-card-content>
           </ion-card>
     </ion-col>

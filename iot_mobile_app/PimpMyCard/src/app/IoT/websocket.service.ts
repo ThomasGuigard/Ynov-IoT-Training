@@ -5,12 +5,14 @@ import { Injectable } from '@angular/core';
 })
 export class WebsocketService {
   socketTemp : any
+  socketHum : any
   serverIp : any
   currentTemp : number
 
   constructor() {
     this.serverIp = "192.168.43.136";
     this.socketTemp = new WebSocket("ws://" + this.serverIp + ":1880/temp");
+    this.socketHum = new WebSocket("ws://" + this.serverIp + ":1880/hum");
     //console.log("ws://" + this.serverIp + ":1880/temp");
   }
 }

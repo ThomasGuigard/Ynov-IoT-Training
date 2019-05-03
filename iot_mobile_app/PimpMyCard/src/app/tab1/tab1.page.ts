@@ -7,7 +7,8 @@ import { WebsocketService } from '../IoT/websocket.service';
   styleUrls: ['tab1.page.scss']
 })
 export class Tab1Page {
-  temp: number = 0;
+  temp: any = 0;
+  humi: any = 0;
   websocketService : any = null;
   initialDelay : number;
   period : number;
@@ -19,7 +20,11 @@ export class Tab1Page {
   ngOnInit() {
     this.websocketService.socketTemp.onmessage = async (msg) => {
       console.log("json : ",JSON.parse(msg.data).temp);
-      this.temp = parseFloat(JSON.parse(msg.data).temp);
+      this.temp = parseFloat(JSON.parse(msg.data).temp) + "°";
+    };
+    this.websocketService.socketHum.onmessage = async (msg) => {
+      console.log("json : ",JSON.parse(msg.data).hum);
+      this.humi = JSON.parse(msg.data).hum + "%";
     };
   }
 }
