@@ -15,7 +15,7 @@
             <ion-card>
               <ion-card-content>
                   <img src="assets/104-512.png"  />
-                  <ion-input type="text" [(ngModel)]="temp" style="text-align:center;"></ion-input>
+                  <ion-input type="text" [(ngModel)]="temp" style="text-align:center;" readonly></ion-input>
               </ion-card-content>
             </ion-card>
       </ion-col>
@@ -23,7 +23,7 @@
           <ion-card>
             <ion-card-content>
                 <img src="assets/humidity-512.png"  />
-                <ion-input type="text" [(ngModel)]="humi"   style="text-align:center;"></ion-input>
+                <ion-input type="text" [(ngModel)]="humi"   style="text-align:center;" readonly></ion-input>
             </ion-card-content>
           </ion-card>
     </ion-col>
@@ -33,7 +33,7 @@
               <ion-card>
                 <ion-card-content>
                     <img src="assets/speed-512.png"  />
-                    <ion-input type="text"></ion-input>
+                    <ion-input type="text" [(ngModel)]="speed"   style="text-align:center;" readonly ></ion-input>
                 </ion-card-content>
               </ion-card>
         </ion-col>
@@ -41,8 +41,9 @@
             <ion-card>
               <ion-card-content>
                   <img src="assets/height-512.png"  />
-                  <ion-input type="text"></ion-input>
+                 
               </ion-card-content>
+              <ion-input type="text"  [(ngModel)]="acce"   style="text-align:center;" readonly></ion-input>
             </ion-card>
       </ion-col>
       <ion-col col-6>

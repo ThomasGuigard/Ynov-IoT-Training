@@ -9,6 +9,8 @@ import { WebsocketService } from '../IoT/websocket.service';
 export class Tab1Page {
   temp: any = 0;
   humi: any = 0;
+  acce: any = 0;
+  speed: any = 0;
   websocketService : any = null;
   initialDelay : number;
   period : number;
@@ -23,8 +25,13 @@ export class Tab1Page {
       this.temp = parseFloat(JSON.parse(msg.data).temp) + "°";
     };
     this.websocketService.socketHum.onmessage = async (msg) => {
-      console.log("json : ",JSON.parse(msg.data).hum);
+      console.log("json : ",JSON.parse(msg.data));
       this.humi = JSON.parse(msg.data).hum + "%";
     };
+    this.websocketService.socketAcc.onmessage = async (msg) => {
+     // console.log("json : ",JSON.parse(msg.data));
+      this.acce = JSON.parse(msg.data).acc;
+    };
+    
   }
 }
