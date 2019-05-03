@@ -9,7 +9,7 @@ export class WebsocketService {
   currentTemp : number
 
   constructor() {
-    this.serverIp = "192.168.189.128";
+    this.serverIp = "192.168.43.136";
     this.socketTemp = new WebSocket("ws://" + this.serverIp + ":1880/temp");
     //console.log("ws://" + this.serverIp + ":1880/temp");
   }
