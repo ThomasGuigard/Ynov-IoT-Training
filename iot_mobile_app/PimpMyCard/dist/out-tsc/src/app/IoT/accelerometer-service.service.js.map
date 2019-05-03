@@ -1,0 +1,1 @@
+{"version":3,"file":"accelerometer-service.service.js","sourceRoot":"","sources":["../../../../../src/app/IoT/accelerometer-service.service.ts"],"names":[],"mappings":";AAAA,OAAO,EAAE,UAAU,EAAE,MAAM,eAAe,CAAC;AAK3C;IACE;IAAgB,CAAC;IADN,2BAA2B;QAHvC,UAAU,CAAC;YACV,UAAU,EAAE,MAAM;SACnB,CAAC;;OACW,2BAA2B,CAEvC;IAAD,kCAAC;CAAA,AAFD,IAEC;SAFY,2BAA2B"}
