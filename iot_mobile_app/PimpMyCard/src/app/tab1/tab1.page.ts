@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { WebsocketService } from '../IoT/websocket.service';
+import * as $ from "jquery";
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-tab1',
@@ -8,54 +10,73 @@ import { WebsocketService } from '../IoT/websocket.service';
 })
 export class Tab1Page {
   temp: any = 0;
+  pastTempArray = new Array<any>();
   humi: any = 0;
   acce: any = "[100,200,300]";
   speed: any = 0;
   angleX: any = 0;
-  websocketService : any = null;
-  initialDelay : number;
-  period : number;
+  websocketService: any = null;
+  initialDelay: number;
+  period: number;
 
-  constructor(websocketService : WebsocketService) {
+  constructor(websocketService: WebsocketService, private httpClient : HttpClient) {
     this.websocketService = websocketService;
   }
 
   ngOnInit() {
     this.websocketService.socketTemp.onmessage = async (msg) => {
-      console.log("json : ",JSON.parse(msg.data).temp);
-      this.temp = parseFloat(JSON.parse(msg.data).temp) + "°";
+      //console.log("json : ", JSON.parse(msg.data));
+      this.addNewTempInArray(JSON.parse(msg.data));
+      this.temp = parseFloat(JSON.parse(msg.data).temp);
     };
     this.websocketService.socketHum.onmessage = async (msg) => {
-      console.log("json : ",JSON.parse(msg.data));
-      this.humi = JSON.parse(msg.data).hum + "%";
+      //console.log("json : ", JSON.parse(msg.data));
+      this.humi = JSON.parse(msg.data).hum;
     };
     this.websocketService.socketAcc.onmessage = async (msg) => {
       this.acce = JSON.parse(msg.data).acc;
       this.calculateXAngle(this.acce);
     };
-    this.calculateXAngle(this.acce);
+    //this.calculateXAngle(this.acce);
   }
 
-  calculateXAngle(accxyz){
+  addNewTempInArray(newTemp : any){
+    for (let index = 0; index < this.pastTempArray.length; index++) {
+      if(index != 9){
+        this.pastTempArray[index] = this.pastTempArray[index+1];
+      }else{
+        this.pastTempArray[index] = newTemp;
+      }
+    }
+    console.log("array après: ",this.pastTempArray);
+  }
+
+  ngAfterViewInit() {
+    console.log(this.httpClient);
+    this.httpClient.get('http://192.168.43.136:1880/temperature',{}).subscribe((data) => {
+        for (let index = 0; index <= 9; index++) {
+          this.pastTempArray.push(data[index]);
+        }
+        console.log(this.pastTempArray);
+      }, (error) => {
+        console.log(error.status);
+        console.log(error.error);// error message as string
+        console.log(error.headers);
+      });
+  }
+
+  calculateXAngle(accxyz) {
     var accxyzArray = this.formatAccData(accxyz);
-    console.log(accxyzArray);
-    console.log("x :", accxyzArray[0])
-    console.log("y :",accxyzArray[1]);
-    console.log("z :",accxyzArray[2]);
-    console.log("y² :",Math.pow(accxyzArray[1],2));
-    console.log("z² :",Math.pow(accxyzArray[2],2));
-    console.log('downOperant :',Math.sqrt(Math.pow(accxyzArray[1],2) + Math.pow(accxyzArray[2],2)));
-    let downOperant : number = Math.sqrt(Math.pow(accxyzArray[1],2) + Math.pow(accxyzArray[2],2));
-    console.log(downOperant);
-    var xAngle = Math.atan(accxyzArray[0]/downOperant);
-    xAngle = (xAngle*180)/Math.PI
-    this.angleX = xAngle;
+    let downOperant: number = Math.sqrt(Math.pow(accxyzArray[1], 2) + Math.pow(accxyzArray[2], 2));
+    var xAngle = Math.atan(accxyzArray[0] / downOperant);
+    xAngle = (xAngle * 180) / Math.PI;
+    this.angleX = xAngle.toFixed(2);
   }
 
-  formatAccData(accxyz){
+  formatAccData(accxyz) {
     var accxyzArray = accxyz.split(',');
     for (let index = 0; index < accxyzArray.length; index++) {
-      accxyzArray[index] = accxyzArray[index].replace('[','').replace(']','');
+      accxyzArray[index] = accxyzArray[index].replace('[', '').replace(']', '');
     }
     return accxyzArray;
   }

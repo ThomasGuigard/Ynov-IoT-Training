@@ -15,6 +15,7 @@ export class WebsocketService {
     this.socketTemp = new WebSocket("ws://" + this.serverIp + ":1880/temp");
     this.socketHum = new WebSocket("ws://" + this.serverIp + ":1880/hum");
     this.socketAcc = new WebSocket("ws://" + this.serverIp + ":1880/acc");
+    
     //console.log("ws://" + this.serverIp + ":1880/temp");
   }
 }
