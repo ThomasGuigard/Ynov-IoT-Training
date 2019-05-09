@@ -9,8 +9,9 @@ import { WebsocketService } from '../IoT/websocket.service';
 export class Tab1Page {
   temp: any = 0;
   humi: any = 0;
-  acce: any = 0;
+  acce: any = "[100,200,300]";
   speed: any = 0;
+  angleX: any = 0;
   websocketService : any = null;
   initialDelay : number;
   period : number;
@@ -29,9 +30,33 @@ export class Tab1Page {
       this.humi = JSON.parse(msg.data).hum + "%";
     };
     this.websocketService.socketAcc.onmessage = async (msg) => {
-     // console.log("json : ",JSON.parse(msg.data));
       this.acce = JSON.parse(msg.data).acc;
+      this.calculateXAngle(this.acce);
     };
-    
+    this.calculateXAngle(this.acce);
+  }
+
+  calculateXAngle(accxyz){
+    var accxyzArray = this.formatAccData(accxyz);
+    console.log(accxyzArray);
+    console.log("x :", accxyzArray[0])
+    console.log("y :",accxyzArray[1]);
+    console.log("z :",accxyzArray[2]);
+    console.log("y² :",Math.pow(accxyzArray[1],2));
+    console.log("z² :",Math.pow(accxyzArray[2],2));
+    console.log('downOperant :',Math.sqrt(Math.pow(accxyzArray[1],2) + Math.pow(accxyzArray[2],2)));
+    let downOperant : number = Math.sqrt(Math.pow(accxyzArray[1],2) + Math.pow(accxyzArray[2],2));
+    console.log(downOperant);
+    var xAngle = Math.atan(accxyzArray[0]/downOperant);
+    xAngle = (xAngle*180)/Math.PI
+    this.angleX = xAngle;
+  }
+
+  formatAccData(accxyz){
+    var accxyzArray = accxyz.split(',');
+    for (let index = 0; index < accxyzArray.length; index++) {
+      accxyzArray[index] = accxyzArray[index].replace('[','').replace(']','');
+    }
+    return accxyzArray;
   }
 }
