@@ -17,6 +17,11 @@
       
         <ion-item>
           <ion-label>Ouverture des portes</ion-label>
+          <ion-toggle  ></ion-toggle>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Affichage en direct</ion-label>
           <ion-toggle (click)="OpenCloseDoors()" ></ion-toggle>
         </ion-item>
       
@@ -25,10 +30,7 @@
       </ion-list>
 
 
-      <div class="backDoor">
-          <div class="door">  
-          </div>
-        </div>
+      <img [src]="picImage" >
 
 
 </ion-content>

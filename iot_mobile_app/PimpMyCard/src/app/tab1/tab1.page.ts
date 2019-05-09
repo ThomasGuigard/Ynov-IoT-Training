@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { WebsocketService } from '../IoT/websocket.service';
 import * as $ from "jquery";
 import { HttpClient } from '@angular/common/http';
+import { WebsocketService } from '../IoT/websocket.service';
 
 @Component({
   selector: 'app-tab1',
@@ -19,9 +19,12 @@ export class Tab1Page {
   initialDelay: number;
   period: number;
 
-  constructor(websocketService: WebsocketService, private httpClient : HttpClient) {
+  constructor(websocketService: WebsocketService, private httpClient: HttpClient) {
     this.websocketService = websocketService;
+    //this.b64toBlob();
   }
+
+
 
   ngOnInit() {
     this.websocketService.socketTemp.onmessage = async (msg) => {
@@ -37,32 +40,31 @@ export class Tab1Page {
       this.acce = JSON.parse(msg.data).acc;
       this.calculateXAngle(this.acce);
     };
-    //this.calculateXAngle(this.acce);
   }
 
-  addNewTempInArray(newTemp : any){
+  addNewTempInArray(newTemp: any) {
     for (let index = 0; index < this.pastTempArray.length; index++) {
-      if(index != 9){
-        this.pastTempArray[index] = this.pastTempArray[index+1];
-      }else{
+      if (index != 9) {
+        this.pastTempArray[index] = this.pastTempArray[index + 1];
+      } else {
         this.pastTempArray[index] = newTemp;
       }
     }
-    console.log("array après: ",this.pastTempArray);
+    console.log("array après: ", this.pastTempArray);
   }
 
   ngAfterViewInit() {
     console.log(this.httpClient);
-    this.httpClient.get('http://192.168.43.136:1880/temperature',{}).subscribe((data) => {
-        for (let index = 0; index <= 9; index++) {
-          this.pastTempArray.push(data[index]);
-        }
-        console.log(this.pastTempArray);
-      }, (error) => {
-        console.log(error.status);
-        console.log(error.error);// error message as string
-        console.log(error.headers);
-      });
+    this.httpClient.get('http://192.168.43.136:1880/temperature', {}).subscribe((data) => {
+      for (let index = 0; index <= 9; index++) {
+        this.pastTempArray.push(data[index]);
+      }
+      console.log(this.pastTempArray);
+    }, (error) => {
+      console.log(error.status);
+      console.log(error.error);// error message as string
+      console.log(error.headers);
+    });
   }
 
   calculateXAngle(accxyz) {
