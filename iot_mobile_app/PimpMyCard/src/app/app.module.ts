@@ -1,3 +1,4 @@
+import { Base64 } from '@ionic-native/base64/ngx';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';

@@ -7,6 +7,7 @@ export class WebsocketService {
   socketTemp : any
   socketHum : any
   socketAcc : any
+  socketCam : any
   serverIp : any
   currentTemp : number
 
@@ -15,6 +16,7 @@ export class WebsocketService {
     this.socketTemp = new WebSocket("ws://" + this.serverIp + ":1880/temp");
     this.socketHum = new WebSocket("ws://" + this.serverIp + ":1880/hum");
     this.socketAcc = new WebSocket("ws://" + this.serverIp + ":1880/acc");
+    this.socketCam = new WebSocket("ws://" + this.serverIp + ":1880/camera");
     //console.log("ws://" + this.serverIp + ":1880/temp");
   }
 }

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { WebsocketService } from '../IoT/websocket.service';
-
+import { WebsocketService } from '../IoT/websocket.service'; 
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
@@ -11,27 +10,31 @@ export class Tab1Page {
   humi: any = 0;
   acce: any = 0;
   speed: any = 0;
+  camString64 : any;
   websocketService : any = null;
   initialDelay : number;
-  period : number;
-
+  period : number; 
   constructor(websocketService : WebsocketService) {
     this.websocketService = websocketService;
+    //this.b64toBlob();
   }
+
+ 
 
   ngOnInit() {
     this.websocketService.socketTemp.onmessage = async (msg) => {
-      console.log("json : ",JSON.parse(msg.data).temp);
+     // console.log("json : ",JSON.parse(msg.data).temp);
       this.temp = parseFloat(JSON.parse(msg.data).temp) + "°";
     };
     this.websocketService.socketHum.onmessage = async (msg) => {
-      console.log("json : ",JSON.parse(msg.data));
+     // console.log("json : ",JSON.parse(msg.data));
       this.humi = JSON.parse(msg.data).hum + "%";
     };
     this.websocketService.socketAcc.onmessage = async (msg) => {
      // console.log("json : ",JSON.parse(msg.data));
       this.acce = JSON.parse(msg.data).acc;
     };
+    
     
   }
 }
