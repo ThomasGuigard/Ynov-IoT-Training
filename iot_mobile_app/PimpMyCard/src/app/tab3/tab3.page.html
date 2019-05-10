@@ -22,7 +22,7 @@
 
     <ion-item>
       <ion-label>Affichage en direct</ion-label>
-      <ion-toggle (click)="OpenCloseDoors()"></ion-toggle>
+      <ion-toggle [(ngModel)]="LiveButton"  (click)="OpenCloseDoors()"></ion-toggle>
     </ion-item>
 
     <ion-item>
@@ -30,9 +30,19 @@
       <ion-toggle [(ngModel)]="LedButton"  (click)="SetLedState()"></ion-toggle>
     </ion-item>
 
+    <ion-item>
+      <ion-datetime [(ngModel)]="DateDebut" style="background: red;width: 33%;" ></ion-datetime>
+      <ion-datetime [(ngModel)]="DateFin" style="background: #012384;width: 33%;"></ion-datetime>
+      <ion-button (click)="GetDateDebutFin()" style="width: 33%;"></ion-button>
+    </ion-item>
+      
 
 
   </ion-list>
+  <div *ngFor="let item of items" >
+
+    <img *ngIf="LiveButton"  src="data:image/jpeg;base64,{{item.base64}}">
+  </div>
 
 
   <img [src]="picImage">
