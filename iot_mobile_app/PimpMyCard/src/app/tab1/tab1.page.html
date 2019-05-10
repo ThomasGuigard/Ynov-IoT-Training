@@ -43,14 +43,16 @@
           </ion-card-content>
           <div style="text-align:center;">{{angleX}}°</div>
         </ion-card>
-        <ion-col col-6>
+        
+           
           <ion-card>
-            <ion-card-content>
-              <img src="assets/pressure-512.png" />
-              <ion-input type="text"></ion-input>
+            <ion-card-content (click)=" OpenMaps()">
+              <img src="assets/localization.png" />
+              <div style="text-align:center;">longitude : {{longitude}}</div>
+              <div style="text-align:center;">latitude : {{latitude}}</div>
             </ion-card-content>
           </ion-card>
-        </ion-col>
+     
       </ion-col>
     </ion-row>
   </ion-grid>

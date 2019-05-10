@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import * as $ from "jquery";
 import { HttpClient } from '@angular/common/http';
 import { WebsocketService } from '../IoT/websocket.service';
-
+import { InAppBrowser, InAppBrowserOptions } from '@ionic-native/in-app-browser/ngx';
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
@@ -20,8 +20,11 @@ export class Tab1Page {
   websocketService: any = null;
   initialDelay: number;
   period: number;
+  Localisation: any;
+  latitude: any;
+  longitude: any;
 
-  constructor(websocketService: WebsocketService, private httpClient: HttpClient) {
+  constructor(websocketService: WebsocketService, private httpClient: HttpClient,  private iab: InAppBrowser) {
     this.websocketService = websocketService;
     //this.b64toBlob();
   }
@@ -43,6 +46,12 @@ export class Tab1Page {
       this.updateSpeed();
       this.calculateXAngle(this.acce);
     };
+    this.websocketService.socketLocalisation.onmessage = async (msg) => {
+      console.log("json : ", JSON.parse(msg.data));
+      this.longitude = JSON.parse(msg.data).longitude;
+      this.latitude = JSON.parse(msg.data).latitude;
+      this.Localisation =  this.latitude + " , " +  this.longitude;
+    };
   }
 
   addNewTempInArray(newTemp: any) {
@@ -53,7 +62,7 @@ export class Tab1Page {
         this.pastTempArray[index] = newTemp;
       }
     }
-    console.log("array temp après: ", this.pastTempArray);
+    //console.log("array temp après: ", this.pastTempArray);
   }
 
   addNewHumInArray(newHum : any){
@@ -64,7 +73,7 @@ export class Tab1Page {
         this.pastHumArray[index] = newHum;
       }
     }
-    console.log("array hum après: ", this.pastHumArray);
+    //console.log("array hum après: ", this.pastHumArray);
   }
 
   addNewAccInArray(newAcc : any){
@@ -75,7 +84,7 @@ export class Tab1Page {
         this.pastAccArray[index] = newAcc;
       }
     }
-    console.log("array acc après: ", this.pastAccArray);
+    // console.log("array après: ", this.pastTempArray);
   }
 
   ngAfterViewInit() {
@@ -185,5 +194,12 @@ export class Tab1Page {
       vf=vf*3,6;//convert in km/h
       this.speed = vf.toFixed(2);
     }
+  }
+
+  OpenMaps() {
+    const options: InAppBrowserOptions = {
+      zoom: 'no'
+    }
+    const browser = this.iab.create('https://www.google.com/maps/search/?api=1&query='+this.latitude +","+this.longitude ,'_self', options);
   }
 }

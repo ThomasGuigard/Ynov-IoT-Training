@@ -13,7 +13,8 @@ import { GaugeModule } from 'angular-gauge';
 import { NgxGaugeModule } from 'ngx-gauge';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
-
+import { LocalNotifications } from '@ionic-native/local-notifications/ngx'; 
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -23,7 +24,9 @@ import { HttpClient } from '@angular/common/http';
     HttpClientModule,
     StatusBar,
     HttpClient,
+    LocalNotifications,
     SplashScreen,
+    InAppBrowser,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]
