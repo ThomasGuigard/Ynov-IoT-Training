@@ -1,36 +1,41 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-        <img src="assets/raspberry.png" style="height: 7%;width: 7%;display: inline;" />
-        Pimp My Card
+      <img src="assets/raspberry.png" style="height: 7%;width: 7%;display: inline;" />
+      Pimp My Card
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-    <ion-list>
+  <ion-list>
 
-        <ion-item>
-          <ion-label>Mode Alerte</ion-label>
-          <ion-toggle ></ion-toggle>
-        </ion-item>
-      
-        <ion-item>
-          <ion-label>Ouverture des portes</ion-label>
-          <ion-toggle  ></ion-toggle>
-        </ion-item>
+    <ion-item>
+      <ion-label>Mode Alerte</ion-label>
+      <ion-toggle></ion-toggle>
+    </ion-item>
 
-        <ion-item>
-          <ion-label>Affichage en direct</ion-label>
-          <ion-toggle (click)="OpenCloseDoors()" ></ion-toggle>
-        </ion-item>
-      
-     
-      
-      </ion-list>
+    <ion-item>
+      <ion-label>Ouverture des portes</ion-label>
+      <ion-toggle></ion-toggle>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Affichage en direct</ion-label>
+      <ion-toggle (click)="OpenCloseDoors()"></ion-toggle>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Status de la LED</ion-label>
+      <ion-toggle [(ngModel)]="LedStatus"></ion-toggle>
+    </ion-item>
 
 
-      <img [src]="picImage" >
+
+  </ion-list>
+
+
+  <img [src]="picImage">
 
 
 </ion-content>
