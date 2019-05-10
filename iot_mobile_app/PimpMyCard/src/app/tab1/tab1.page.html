@@ -14,7 +14,7 @@
         <ion-card>
           <ion-card-content>
             <img src="assets/104-512.png" />
-            <div style="text-align:center;">{{temp}}</div>
+            <div style="text-align:center;">{{temp}}°C</div>
           </ion-card-content>
         </ion-card>
       </ion-col>
@@ -22,7 +22,7 @@
         <ion-card>
           <ion-card-content>
             <img src="assets/humidity-512.png" />
-            <ion-input type="text" [(ngModel)]="humi" style="text-align:center;" readonly></ion-input>
+            <div style="text-align:center;">{{humi}}%</div>
           </ion-card-content>
         </ion-card>
       </ion-col>
@@ -32,7 +32,7 @@
         <ion-card>
           <ion-card-content>
             <img src="assets/speed-512.png" />
-            <ion-input type="text" [(ngModel)]="speed" style="text-align:center;" readonly></ion-input>
+            <div style="text-align:center;">{{speed}} Km/h</div>
           </ion-card-content>
         </ion-card>
       </ion-col>
@@ -41,7 +41,7 @@
           <ion-card-content>
             <img src="assets/height-512.png" />
           </ion-card-content>
-          <ion-input type="text" [(ngModel)]="angleX" style="text-align:center;" readonly></ion-input>
+          <div style="text-align:center;">{{angleX}}°</div>
         </ion-card>
         
            
