@@ -9,6 +9,8 @@ export class WebsocketService {
   socketAcc : any
   socketCam : any
   socketLed : any
+  socketLedwrite : any
+  socketLocalisation : any
   serverIp : any
   currentTemp : number
 
@@ -19,6 +21,8 @@ export class WebsocketService {
     this.socketAcc = new WebSocket("ws://" + this.serverIp + ":1880/acc");
     this.socketCam = new WebSocket("ws://" + this.serverIp + ":1880/camera");
     this.socketLed = new WebSocket("ws://" + this.serverIp + ":1880/ledStatus");
+    this.socketLedwrite = new WebSocket("ws://" + this.serverIp + ":1880/getStatus");
+    this.socketLocalisation = new WebSocket("ws://" + this.serverIp + ":1880/localisation");
     //console.log("ws://" + this.serverIp + ":1880/temp");
   }
 }

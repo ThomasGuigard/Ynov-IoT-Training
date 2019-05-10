@@ -26,8 +26,8 @@
     </ion-item>
 
     <ion-item>
-      <ion-label>Status de la LED</ion-label>
-      <ion-toggle [(ngModel)]="LedStatus"></ion-toggle>
+      <ion-label>Changer le statut de la LED</ion-label>
+      <ion-toggle [(ngModel)]="LedButton"  (click)="SetLedState()"></ion-toggle>
     </ion-item>
 
 
