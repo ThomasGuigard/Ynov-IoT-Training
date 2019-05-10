@@ -26,7 +26,6 @@ export class Tab1Page {
 
   constructor(websocketService: WebsocketService, private httpClient: HttpClient,  private iab: InAppBrowser) {
     this.websocketService = websocketService;
-    //this.b64toBlob();
   }
 
 
@@ -47,7 +46,6 @@ export class Tab1Page {
       this.calculateXAngle(this.acce);
     };
     this.websocketService.socketLocalisation.onmessage = async (msg) => {
-      console.log("json : ", JSON.parse(msg.data));
       this.longitude = JSON.parse(msg.data).longitude;
       this.latitude = JSON.parse(msg.data).latitude;
       this.Localisation =  this.latitude + " , " +  this.longitude;
@@ -62,7 +60,6 @@ export class Tab1Page {
         this.pastTempArray[index] = newTemp;
       }
     }
-    //console.log("array temp après: ", this.pastTempArray);
   }
 
   addNewHumInArray(newHum : any){
@@ -73,7 +70,6 @@ export class Tab1Page {
         this.pastHumArray[index] = newHum;
       }
     }
-    //console.log("array hum après: ", this.pastHumArray);
   }
 
   addNewAccInArray(newAcc : any){
@@ -84,7 +80,6 @@ export class Tab1Page {
         this.pastAccArray[index] = newAcc;
       }
     }
-    // console.log("array après: ", this.pastTempArray);
   }
 
   ngAfterViewInit() {
@@ -92,7 +87,6 @@ export class Tab1Page {
       for (let index = 0; index <= 9; index++) {
         this.pastTempArray.push(data[index]);
       }
-      //console.log(this.pastTempArray);
     }, (error) => {
       console.log(error.status);
       console.log(error.error);// error message as string
@@ -102,7 +96,6 @@ export class Tab1Page {
       for (let index = 0; index <= 9; index++) {
         this.pastHumArray.push(data[index]);
       }
-      //console.log(this.pastHumArray);
     }, (error) => {
       console.log(error.status);
       console.log(error.error);// error message as string
@@ -110,11 +103,9 @@ export class Tab1Page {
     });
     this.httpClient.get('http://192.168.43.136:1880/acceleration', {}).subscribe((data) => {
       for (let index = 0; index <= 9; index++) {
-        console.log(data[index]);
         this.pastAccArray.push(data[index]);
       }
       this.calculateSpeedWithArray();
-      //console.log(this.pastAccArray);
     }, (error) => {
       console.log(error.status);
       console.log(error.error);// error message as string
