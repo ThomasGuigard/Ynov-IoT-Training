@@ -76,10 +76,12 @@ export class Tab3Page {
     return datum / 1000;
   }
   getDateDebutFin() {
+  
     let datedeb: string;
     let datefin: string;
     datedeb = this.toTimestamp(this.DateDebut).toString().replace(".", "");
     datefin = this.toTimestamp(this.DateFin).toString().replace(".", "");
+    //console.log("http://192.168.43.136:1880/getpictures?dateMax=" + datefin + "&dateMin=" + datedeb + "&ledState=1");
     this.httpClient.get("http://192.168.43.136:1880/getpictures?dateMax=" + datefin + "&dateMin=" + datedeb + "&ledState=1", {}).subscribe((data) => {
       this.items = data;
     }, (error) => {

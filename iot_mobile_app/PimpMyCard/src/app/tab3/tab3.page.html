@@ -22,29 +22,36 @@
 
     <ion-item>
       <ion-label>Affichage en direct</ion-label>
-      <ion-toggle [(ngModel)]="LiveButton"  (click)="openCloseDoors()"></ion-toggle>
+      <ion-toggle [(ngModel)]="LiveButton" (click)="openCloseDoors()"></ion-toggle>
     </ion-item>
 
     <ion-item>
       <ion-label>Changer le statut de la LED</ion-label>
-      <ion-toggle [(ngModel)]="LedButton"  (click)="SetLedState()"></ion-toggle>
+      <ion-toggle [(ngModel)]="LedButton" (click)="SetLedState()"></ion-toggle>
     </ion-item>
 
     <ion-item>
-      <ion-datetime [(ngModel)]="DateDebut" style="background: red;width: 33%;" ></ion-datetime>
-      <ion-datetime [(ngModel)]="DateFin" style="background: #012384;width: 33%;"></ion-datetime>
-      <ion-button (click)="getDateDebutFin()" style="width: 33%;"></ion-button>
+      <ion-label fixed>Date de début : </ion-label>
+      <ion-datetime [(ngModel)]="DateDebut" style="width: 33%;text-align: right;background-color: silver;">
+      </ion-datetime>
     </ion-item>
-      
+    <ion-item>
+      <ion-label fixed>Date de fin : </ion-label>
+      <ion-datetime [(ngModel)]="DateFin" style="width: 33%;background-color: silver;"></ion-datetime>
+    </ion-item>
+    <ion-item>
+      <ion-button (click)="getDateDebutFin()" style="width: 100%;">Afficher les images stockées </ion-button>
+    </ion-item>
+
 
 
   </ion-list>
-  <div *ngFor="let item of items" >
-    <img *ngIf="LiveButton"  src="data:image/jpeg;base64,{{item.base64}}">
+  <div *ngFor="let item of items">
+    <img  src="data:image/jpeg;base64,{{item.base64}}">
   </div>
 
 
-  <img [src]="picImage">
+  <img *ngIf="LiveButton" [src]="picImage">
 
 
 </ion-content>
