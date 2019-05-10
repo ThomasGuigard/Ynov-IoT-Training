@@ -31,7 +31,7 @@ export class Tab3Page {
     };
 
     this.websocketService.socketLed.onmessage = async (msg) => {
-      console.log(msg);
+      console.log("LED"+msg);
       //this.LedStatus = false;
     };
     
