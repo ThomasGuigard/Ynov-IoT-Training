@@ -2,8 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import * as $ from "jquery";
 import { Component, OnInit } from '@angular/core';
 import { WebsocketService } from '../IoT/websocket.service';
-import { IonToggle } from '@ionic/angular';
+import { IonToggle, AlertController, ModalController, IonSlide, IonSlides } from '@ionic/angular';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
+import { Tab1Page } from '../tab1/tab1.page';
 @Component({
   selector: 'app-tab3',
   templateUrl: 'tab3.page.html',
@@ -18,10 +19,14 @@ export class Tab3Page {
   LedButton: any;
   LedStatutToDisableToggle: number;
   DateDebut: Date;
+  HeureDebut: Date;
+  HeureFin: Date;
   DateFin: Date;
+  Slide: IonSlides;
+  showhideslides: boolean = false;
   items: any;
   LiveButton: boolean = false;
-  constructor(websocketService: WebsocketService, private localNotifications: LocalNotifications, private httpClient: HttpClient) {
+  constructor(websocketService: WebsocketService, private localNotifications: LocalNotifications, private httpClient: HttpClient, public modalctrl: ModalController) {
     this.websocketService = websocketService;
   }
 
@@ -76,16 +81,29 @@ export class Tab3Page {
     return datum / 1000;
   }
   getDateDebutFin() {
-  
+    let HeureDebutObj = new Date(this.HeureDebut);
+    let HeureFinObj = new Date(this.HeureFin);
+    let DateDebutObj = new Date(this.DateDebut);
+    let DateFinObj = new Date(this.DateFin);
+    DateDebutObj.setHours(HeureDebutObj.getHours(), HeureDebutObj.getMinutes());
+    DateFinObj.setHours(HeureFinObj.getHours(), HeureFinObj.getMinutes());
+    //console.log(dateObj4);
     let datedeb: string;
     let datefin: string;
-    datedeb = this.toTimestamp(this.DateDebut).toString().replace(".", "");
-    datefin = this.toTimestamp(this.DateFin).toString().replace(".", "");
-    //console.log("http://192.168.43.136:1880/getpictures?dateMax=" + datefin + "&dateMin=" + datedeb + "&ledState=1");
+    datedeb = this.toTimestamp(DateDebutObj).toString().replace(".", "");
+    datefin = this.toTimestamp(DateFinObj).toString().replace(".", "");
+    console.log("http://192.168.43.136:1880/getpictures?dateMax=" + datefin + "&dateMin=" + datedeb + "&ledState=1");
     this.httpClient.get("http://192.168.43.136:1880/getpictures?dateMax=" + datefin + "&dateMin=" + datedeb + "&ledState=1", {}).subscribe((data) => {
       this.items = data;
     }, (error) => {
 
     });
+
+    this.showhideslides = true;
+
   }
+  hideslides() {
+    this.showhideslides = false;
+  }
+
 }

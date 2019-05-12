@@ -32,26 +32,36 @@
 
     <ion-item>
       <ion-label fixed>Date de début : </ion-label>
-      <ion-datetime [(ngModel)]="DateDebut" style="width: 33%;text-align: right;background-color: silver;">
+      <ion-datetime [(ngModel)]="HeureDebut" displayFormat="HH:mm" value="15:03"
+        style="width: 33%;text-align: right;"></ion-datetime>
+      <ion-datetime [(ngModel)]="DateDebut" value="2019-05-10"  style="width: 33%;text-align: right;">
       </ion-datetime>
     </ion-item>
     <ion-item>
       <ion-label fixed>Date de fin : </ion-label>
-      <ion-datetime [(ngModel)]="DateFin" style="width: 33%;background-color: silver;"></ion-datetime>
+      <ion-datetime [(ngModel)]="HeureFin" displayFormat="HH:mm" value="17:03"
+        style="width: 33%;text-align: right;" ></ion-datetime>
+      <ion-datetime [(ngModel)]="DateFin" value="2019-05-10" style="width: 33%;text-align: right;"></ion-datetime>
     </ion-item>
     <ion-item>
       <ion-button (click)="getDateDebutFin()" style="width: 100%;">Afficher les images stockées </ion-button>
     </ion-item>
-
-
-
   </ion-list>
-  <div *ngFor="let item of items">
-    <img  src="data:image/jpeg;base64,{{item.base64}}">
-  </div>
-
-
   <img *ngIf="LiveButton" [src]="picImage">
 
 
 </ion-content>
+<div *ngIf="showhideslides" style="height: 100%;width: 100%;">
+  <ion-button (click)="hideslides()">Close</ion-button>
+  <ion-grid>
+    <ion-row>
+      <ion-col col-6 *ngFor="let item of items">
+        <ion-card>
+          <ion-card-content>
+            <img style="width: 300px;height: 150px;" src="data:image/jpeg;base64,{{item.base64}}">
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</div>
