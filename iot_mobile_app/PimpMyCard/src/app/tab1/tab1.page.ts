@@ -1,3 +1,4 @@
+import { AlarmService } from './../IoT/alarm.service';
 import { Component, OnInit } from '@angular/core';
 import * as $ from "jquery";
 import { HttpClient } from '@angular/common/http';
@@ -23,8 +24,9 @@ export class Tab1Page {
   Localisation: any;
   latitude: any;
   longitude: any;
+  ledState : any;
 
-  constructor(websocketService: WebsocketService, private httpClient: HttpClient,  private iab: InAppBrowser) {
+  constructor(websocketService: WebsocketService, private httpClient: HttpClient,  private iab: InAppBrowser, private alarm : AlarmService) {
     this.websocketService = websocketService;
     //this.b64toBlob();
   }
@@ -122,6 +124,13 @@ export class Tab1Page {
     });
   }
 
+  ionViewWillEnter(){
+    if(this.alarm.ledState!=null){
+      this.ledState = this.alarm.ledState;
+      console.log(this.ledState);
+    }
+  }
+
   calculateXAngle(accxyz) {
     var accxyzArray = this.formatAccData(accxyz);
     let downOperant: number = Math.sqrt(Math.pow(accxyzArray[1], 2) + Math.pow(accxyzArray[2], 2));
@@ -164,6 +173,7 @@ export class Tab1Page {
       }
       vf=vf*3,6;//convert in km/h
       this.speed = vf.toFixed(2);
+      this.alarm.speed = this.speed;
     }
   }
 
@@ -193,6 +203,12 @@ export class Tab1Page {
       }
       vf=vf*3,6;//convert in km/h
       this.speed = vf.toFixed(2);
+      this.alarm.speed = this.speed;
+      console.log('vitesse avant test :',this.alarm.speed);
+      if(this.alarm.speed > 15 && this.ledState === 1){
+        this.alarm.isAlertActivated = true;
+        console.log('alert active :',this.alarm.isAlertActivated);
+      }
     }
   }
 
@@ -201,5 +217,9 @@ export class Tab1Page {
       zoom: 'no'
     }
     const browser = this.iab.create('https://www.google.com/maps/search/?api=1&query='+this.latitude +","+this.longitude ,'_self', options);
+  }
+
+  closeAlert(){
+    this.alarm.isAlertActivated = false;
   }
 }

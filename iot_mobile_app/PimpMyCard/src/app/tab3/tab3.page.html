@@ -9,28 +9,31 @@
 
 <ion-content>
   <ion-list>
+      <ion-row *ngIf="alarm.isAlertActivated" >
+          <ion-col col-12 style="border: 2px solid red;text-align:center;">
+              <div style="position: absolute; top: 5px; right:5px;">
+                  <ion-icon style="color:red;" name="close" (click)="closeAlert()"></ion-icon>
+              </div>
+            <div style="color:red;">
+              Alerte déclenchée
+            </div>
+          </ion-col>
+        </ion-row>
 
     <ion-item>
       <ion-label>Mode Alerte</ion-label>
-      <ion-toggle></ion-toggle>
+      <ion-toggle #alarmButton [(ngModel)]="ledStatus"  (click)="SetLedState()" [disabled]="isAlarmButtonDisabled"></ion-toggle>
     </ion-item>
 
     <ion-item>
       <ion-label>Ouverture des portes</ion-label>
-      <ion-toggle></ion-toggle>
+      <ion-toggle (click)="setDoorState()" [(ngModel)]="doorState" [disabled]="isDoorButtonDisabled"></ion-toggle>
     </ion-item>
 
     <ion-item>
       <ion-label>Affichage en direct</ion-label>
       <ion-toggle (click)="OpenCloseDoors()"></ion-toggle>
     </ion-item>
-
-    <ion-item>
-      <ion-label>Changer le statut de la LED</ion-label>
-      <ion-toggle [(ngModel)]="LedButton"  (click)="SetLedState()"></ion-toggle>
-    </ion-item>
-
-
 
   </ion-list>
 
