@@ -6,7 +6,7 @@ import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-
+import { HTTP } from '@ionic-native/http/ngx';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { GaugeModule } from 'angular-gauge';
@@ -15,7 +15,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx'; 
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
-
+import { DatePicker } from '@ionic-native/date-picker/ngx';
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
@@ -27,6 +27,7 @@ import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
     LocalNotifications,
     SplashScreen,
     InAppBrowser,
+    DatePicker,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

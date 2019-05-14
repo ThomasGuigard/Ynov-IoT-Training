@@ -12,6 +12,7 @@ export class WebsocketService {
   socketLedwrite : any
   socketLocalisation : any
   socketDoors : any
+  socketpictures :any
   serverIp : any
   currentTemp : number
 
@@ -24,7 +25,7 @@ export class WebsocketService {
     this.socketLed = new WebSocket("ws://" + this.serverIp + ":1880/ledStatus");
     this.socketLedwrite = new WebSocket("ws://" + this.serverIp + ":1880/getStatus");
     this.socketLocalisation = new WebSocket("ws://" + this.serverIp + ":1880/localisation");
-    this.socketDoors = new WebSocket("ws://" + this.serverIp + ":1880/setDoorsState");
+    this.socketpictures = new WebSocket("ws://" + this.serverIp + ":1880/getPictures");
     //console.log("ws://" + this.serverIp + ":1880/temp");
   }
 }
