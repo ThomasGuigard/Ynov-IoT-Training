@@ -25,3 +25,10 @@ mwl-gauge > .gauge > .value-text {
   font-weight: bold;
   font-size: 1em;
 }
+@media screen and (min-width: 800px){
+  .display_cards{
+    text-align: center;
+    display: flex!important;
+    flex-flow: row-reverse;
+  }
+}

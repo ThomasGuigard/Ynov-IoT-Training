@@ -1,0 +1,31 @@
+<ion-header>
+    <ion-toolbar>
+      <ion-row style="display: flex;align-items:center;">
+        <ion-back-button></ion-back-button>
+        <ion-title>Derniers relevés</ion-title>
+      </ion-row>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-content style="padding: 5%">
+    <ion-row>
+      <ion-col style="text-align: center;">
+        <ion-title>Dénivelé</ion-title>
+      </ion-col>
+    </ion-row>
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>des plus récentes aux plus anciennes</ion-card-title>
+        <ion-card-subtitle>(interval : 1 seconde)</ion-card-subtitle>
+        <ion-card-subtitle>(max : 360°)</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-badge></ion-badge>
+          <ion-item *ngFor="let accData of accDatas">
+            {{accData}}&nbsp; °
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+  </ion-content>

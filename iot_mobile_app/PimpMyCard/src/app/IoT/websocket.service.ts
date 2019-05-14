@@ -4,17 +4,17 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class WebsocketService {
-  socketTemp : any
-  socketHum : any
-  socketAcc : any
-  socketCam : any
-  socketLed : any
-  socketLedwrite : any
-  socketLocalisation : any
-  socketDoors : any
-  socketpictures :any
-  serverIp : any
-  currentTemp : number
+  socketTemp: any
+  socketHum: any
+  socketAcc: any
+  socketCam: any
+  socketLed: any
+  socketLedwrite: any
+  socketLocalisation: any
+  socketDoors: any
+  socketpictures: any
+  serverIp: any
+  currentTemp: number
 
   constructor() {
     this.serverIp = "192.168.43.136";

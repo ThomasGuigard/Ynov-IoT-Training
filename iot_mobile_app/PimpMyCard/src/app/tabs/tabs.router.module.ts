@@ -16,15 +16,15 @@ const routes: Routes = [
           }
         ]
       },
-     /* {
-        path: 'tab2',
-        children: [
-          {
-            path: '',
-            loadChildren: '../tab2/tab2.module#Tab2PageModule'
-          }
-        ]
-      },*/
+      /* {
+         path: 'tab2',
+         children: [
+           {
+             path: '',
+             loadChildren: '../tab2/tab2.module#Tab2PageModule'
+           }
+         ]
+       },*/
       {
         path: 'tab3',
         children: [
@@ -54,4 +54,4 @@ const routes: Routes = [
   ],
   exports: [RouterModule]
 })
-export class TabsPageRoutingModule {}
+export class TabsPageRoutingModule { }

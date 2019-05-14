@@ -9,3 +9,10 @@
 @import '~@ionic/angular/css/text-alignment.css';
 @import '~@ionic/angular/css/text-transformation.css';
 @import '~@ionic/angular/css/flex-utils.css';
+
+@media screen and (min-width: 800px){
+    .logo_icon{
+        height: 40px!important;
+        width: auto!important;
+    }
+}

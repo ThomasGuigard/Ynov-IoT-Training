@@ -1,28 +1,31 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>
-      <img src="assets/raspberry.png" style="height: 7%;width: 7%;display: inline;" />
-      Pimp My Card
-    </ion-title>
+    <ion-row style="display: flex;align-items:center;">
+      <img src="assets/raspberry.png" style="height: 7%;width: 7%;display: inline;" class="logo_icon" />
+      <ion-title>
+        Pimp My Card
+      </ion-title>
+    </ion-row>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <ion-list>
-      <ion-row *ngIf="alarm.isAlertActivated" >
-          <ion-col col-12 style="border: 2px solid red;text-align:center;">
-              <div style="position: absolute; top: 5px; right:5px;">
-                  <ion-icon style="color:red;" name="close" (click)="closeAlert()"></ion-icon>
-              </div>
-            <div style="color:red;">
-              Alerte déclenchée
-            </div>
-          </ion-col>
-        </ion-row>
+    <ion-row *ngIf="alarm.isAlertActivated">
+      <ion-col col-12 style="border: 2px solid red;text-align:center;">
+        <div style="position: absolute; top: 5px; right:5px;">
+          <ion-icon style="color:red;" name="close" (click)="closeAlert()"></ion-icon>
+        </div>
+        <div style="color:red;">
+          Alerte déclenchée
+        </div>
+      </ion-col>
+    </ion-row>
 
     <ion-item>
       <ion-label>Mode Alerte</ion-label>
-      <ion-toggle #alarmButton [(ngModel)]="ledStatus"  (click)="SetLedState()" [disabled]="isAlarmButtonDisabled"></ion-toggle>
+      <ion-toggle #alarmButton [(ngModel)]="ledStatus" (click)="SetLedState()" [disabled]="isAlarmButtonDisabled">
+      </ion-toggle>
     </ion-item>
 
     <ion-item>
@@ -40,15 +43,15 @@
     </ion-item>
     <ion-item>
       <ion-label fixed>Date de début : </ion-label>
-      <ion-datetime [(ngModel)]="HeureDebut" displayFormat="HH:mm" value="15:03"
-        style="width: 33%;text-align: right;"></ion-datetime>
-      <ion-datetime [(ngModel)]="DateDebut" value="2019-05-10"  style="width: 33%;text-align: right;">
+      <ion-datetime [(ngModel)]="HeureDebut" displayFormat="HH:mm" value="15:03" style="width: 33%;text-align: right;">
+      </ion-datetime>
+      <ion-datetime [(ngModel)]="DateDebut" value="2019-05-10" style="width: 33%;text-align: right;">
       </ion-datetime>
     </ion-item>
     <ion-item>
       <ion-label fixed>Date de fin : </ion-label>
-      <ion-datetime [(ngModel)]="HeureFin" displayFormat="HH:mm" value="17:03"
-        style="width: 33%;text-align: right;" ></ion-datetime>
+      <ion-datetime [(ngModel)]="HeureFin" displayFormat="HH:mm" value="17:03" style="width: 33%;text-align: right;">
+      </ion-datetime>
       <ion-datetime [(ngModel)]="DateFin" value="2019-05-10" style="width: 33%;text-align: right;"></ion-datetime>
     </ion-item>
     <ion-item>

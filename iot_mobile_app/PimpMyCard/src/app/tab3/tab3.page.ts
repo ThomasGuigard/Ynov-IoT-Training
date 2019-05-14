@@ -18,11 +18,11 @@ export class Tab3Page {
   picImage: any;
   showImage: boolean = false;
   ledStatus: boolean;
-  ledButton : any;
-  isAlarmButtonDisabled : boolean = true;
-  isDoorButtonDisabled : boolean = true;
-  speed : any = null;
-  doorState : any = null;
+  ledButton: any;
+  isAlarmButtonDisabled: boolean = true;
+  isDoorButtonDisabled: boolean = true;
+  speed: any = null;
+  doorState: any = null;
   LedStatutToDisableToggle: number;
   DateDebut: Date;
   HeureDebut: Date;
@@ -34,17 +34,17 @@ export class Tab3Page {
   LiveButton: boolean = false;
   @ViewChild('alarmButton') alarmButton: IonToggle;
 
-  constructor(websocketService: WebsocketService, private localNotifications : LocalNotifications, private alarm : AlarmService, private httpClient: HttpClient, public modalctrl: ModalController) {
+  constructor(websocketService: WebsocketService, private localNotifications: LocalNotifications, private alarm: AlarmService, private httpClient: HttpClient, public modalctrl: ModalController) {
     this.websocketService = websocketService;
   }
 
   ngOnInit() {
 
-    this.httpClient.get('http://192.168.43.136:1880/getDoorsState', {}).subscribe((data : any) => {
-      if(data.payload.status === 0){
+    this.httpClient.get('http://192.168.43.136:1880/getDoorsState', {}).subscribe((data: any) => {
+      if (data.payload.status === 0) {
         this.doorState = false;
         //console.log("doorState : ",this.doorState);
-      }else{
+      } else {
         this.doorState = true;
         //console.log("doorState : ",this.doorState);
       }
@@ -73,7 +73,7 @@ export class Tab3Page {
       this.alarm.ledState = this.websocketService.ledStatus;
       //console.log(this.alarm.ledState);
       this.isAlarmButtonDisabled = false;
-      if(this.websocketService.ledStatus == 1){
+      if (this.websocketService.ledStatus == 1) {
         this.localNotifications.schedule({
           id: 1,
           text: 'Alerte'
@@ -91,8 +91,8 @@ export class Tab3Page {
     };
   }
 
-  ionViewWillEnter(){
-    if(this.alarm.ledState!=null){
+  ionViewWillEnter() {
+    if (this.alarm.ledState != null) {
       this.ledStatus = this.alarm.ledState;
       //console.log(this.ledStatus);
     }
@@ -106,21 +106,21 @@ export class Tab3Page {
 
   }
 
-  setDoorState(){
+  setDoorState() {
     this.websocketService.socketDoors.send(JSON.stringify({
       status: 0
     }));
   }
 
   openCloseDoors() {
-    if (this.showImage){
+    if (this.showImage) {
       this.showImage = false;
-    }else{
+    } else {
       this.showImage = true;
     }
   }
 
-  closeAlert(){
+  closeAlert() {
     this.alarm.isAlertActivated = false;
   }
 
@@ -143,7 +143,7 @@ export class Tab3Page {
     //console.log("http://192.168.43.136:1880/getpictures?dateMax=" + datefin + "&dateMin=" + datedeb + "&ledState=1");
     this.httpClient.get("http://192.168.43.136:1880/getpictures?dateMax=" + datefin + "&dateMin=" + datedeb + "&ledState=1", {}).subscribe((data) => {
       this.items = data;
-    }, (error) => {});
+    }, (error) => { });
     this.showhideslides = true;
   }
 

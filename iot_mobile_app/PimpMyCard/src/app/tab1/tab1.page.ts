@@ -4,6 +4,7 @@ import * as $ from "jquery";
 import { HttpClient } from '@angular/common/http';
 import { WebsocketService } from '../IoT/websocket.service';
 import { InAppBrowser, InAppBrowserOptions } from '@ionic-native/in-app-browser/ngx';
+import { Router, NavigationExtras } from '@angular/router';
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
@@ -24,9 +25,9 @@ export class Tab1Page {
   Localisation: any;
   latitude: any;
   longitude: any;
-  ledState : any;
+  ledState: any;
 
-  constructor(websocketService: WebsocketService, private httpClient: HttpClient,  private iab: InAppBrowser, private alarm : AlarmService) {
+  constructor(websocketService: WebsocketService, private httpClient: HttpClient, private iab: InAppBrowser, private alarm: AlarmService, private router: Router) {
     this.websocketService = websocketService;
   }
 
@@ -50,7 +51,7 @@ export class Tab1Page {
     this.websocketService.socketLocalisation.onmessage = async (msg) => {
       this.longitude = JSON.parse(msg.data).longitude;
       this.latitude = JSON.parse(msg.data).latitude;
-      this.Localisation =  this.latitude + " , " +  this.longitude;
+      this.Localisation = this.latitude + " , " + this.longitude;
     };
   }
 
@@ -64,7 +65,7 @@ export class Tab1Page {
     }
   }
 
-  addNewHumInArray(newHum : any){
+  addNewHumInArray(newHum: any) {
     for (let index = 0; index < this.pastHumArray.length; index++) {
       if (index != 9) {
         this.pastHumArray[index] = this.pastHumArray[index + 1];
@@ -74,7 +75,7 @@ export class Tab1Page {
     }
   }
 
-  addNewAccInArray(newAcc : any){
+  addNewAccInArray(newAcc: any) {
     for (let index = 0; index < this.pastAccArray.length; index++) {
       if (index != 9) {
         this.pastAccArray[index] = this.pastAccArray[index + 1];
@@ -115,8 +116,8 @@ export class Tab1Page {
     });
   }
 
-  ionViewWillEnter(){
-    if(this.alarm.ledState!=null){
+  ionViewWillEnter() {
+    if (this.alarm.ledState != null) {
       this.ledState = this.alarm.ledState;
       //console.log(this.ledState);
     }
@@ -138,7 +139,7 @@ export class Tab1Page {
     return accxyzArray;
   }
 
-  calculateSpeedWithArray(){
+  calculateSpeedWithArray() {
     var interval = 1;//1 seconde
     var v0 = 0;
     var vx0 = 0;
@@ -150,25 +151,25 @@ export class Tab1Page {
     var vf = 0;
     var gravity = 1000;
     var accXYZ = null;
-    if(this.pastAccArray.length === 10){
+    if (this.pastAccArray.length === 10) {
       for (let index = 0; index < this.pastAccArray.length; index++) {
         accXYZ = this.formatAccData(this.pastAccArray[index].acc);
-        vfx = vx0 + (accXYZ[0]/gravity)*interval;
-        vfy = vy0 + (accXYZ[0]/gravity)*interval;
-        vfz = vz0 + (accXYZ[0]/gravity)*interval;
-        vf = v0 + Math.sqrt(Math.pow(vfx,2) + Math.pow(vfy,2) + Math.pow(vfz,2));
+        vfx = vx0 + (accXYZ[0] / gravity) * interval;
+        vfy = vy0 + (accXYZ[0] / gravity) * interval;
+        vfz = vz0 + (accXYZ[0] / gravity) * interval;
+        vf = v0 + Math.sqrt(Math.pow(vfx, 2) + Math.pow(vfy, 2) + Math.pow(vfz, 2));
         vx0 = vfx;
         vy0 = vfy;
         vz0 = vfz;
         v0 = vf;
       }
-      vf=vf*3,6;//convert in km/h
+      vf = vf * 3, 6;//convert in km/h
       this.speed = vf.toFixed(2);
       this.alarm.speed = this.speed;
     }
   }
 
-  updateSpeed(){
+  updateSpeed() {
     var interval = 1;//1 seconde
     var v0 = 0;
     var vx0 = 0;
@@ -180,25 +181,25 @@ export class Tab1Page {
     var vf = 0;
     var gravity = 1000;
     var accXYZ = null;
-    if(this.pastAccArray.length === 10){
+    if (this.pastAccArray.length === 10) {
       for (let index = 8; index < this.pastAccArray.length; index++) {
         accXYZ = this.formatAccData(this.pastAccArray[index].acc);
-        vfx = vx0 + (accXYZ[0]/gravity)*interval;
-        vfy = vy0 + (accXYZ[0]/gravity)*interval;
-        vfz = vz0 + (accXYZ[0]/gravity)*interval;
-        vf = v0 + Math.sqrt(Math.pow(vfx,2) + Math.pow(vfy,2) + Math.pow(vfz,2));
+        vfx = vx0 + (accXYZ[0] / gravity) * interval;
+        vfy = vy0 + (accXYZ[0] / gravity) * interval;
+        vfz = vz0 + (accXYZ[0] / gravity) * interval;
+        vf = v0 + Math.sqrt(Math.pow(vfx, 2) + Math.pow(vfy, 2) + Math.pow(vfz, 2));
         vx0 = vfx;
         vy0 = vfy;
         vz0 = vfz;
         v0 = vf;
       }
-      vf=vf*3,6;//convert in km/h
+      vf = vf * 3, 6;//convert in km/h
       this.speed = vf.toFixed(2);
       this.alarm.speed = this.speed;
-      console.log('vitesse avant test :',this.alarm.speed);
-      if(this.alarm.speed > 15 && this.ledState === 1){
+      console.log('vitesse avant test :', this.alarm.speed);
+      if (this.alarm.speed > 15 && this.ledState === 1) {
         this.alarm.isAlertActivated = true;
-        console.log('alert active :',this.alarm.isAlertActivated);
+        console.log('alert active :', this.alarm.isAlertActivated);
       }
     }
   }
@@ -207,10 +208,60 @@ export class Tab1Page {
     const options: InAppBrowserOptions = {
       zoom: 'no'
     }
-    const browser = this.iab.create('https://www.google.com/maps/search/?api=1&query='+this.latitude +","+this.longitude ,'_self', options);
+    const browser = this.iab.create('https://www.google.com/maps/search/?api=1&query=' + this.latitude + "," + this.longitude, '_self', options);
   }
 
-  closeAlert(){
+  closeAlert() {
     this.alarm.isAlertActivated = false;
+  }
+
+  openTemperaturePage() {
+    //this.fillFakeDataInTempPastArray();
+    //console.log(this.pastTempArray);
+    let navigationExtras: NavigationExtras = {
+      queryParams: {
+        special: JSON.stringify(this.pastTempArray)
+      }
+    };
+    this.router.navigate(['temperature'], navigationExtras);
+  }
+
+  openHumidityPage() {
+    //this.fillFakeDataInHumPastArray();
+    //console.log(this.pastHumArray);
+    let navigationExtras: NavigationExtras = {
+      queryParams: {
+        special: JSON.stringify(this.pastHumArray)
+      }
+    };
+    this.router.navigate(['humidity'], navigationExtras);
+  }
+
+  fillFakeDataInTempPastArray() {
+    var temp = 23;
+    var string = "";
+    var json = null;
+    for (let index = 0; index < 10; index++) {
+      //console.log("index",index);
+      string = '{"temp": "' + temp + '"}';
+      json = JSON.parse(string);
+      this.pastTempArray.push(json);
+      temp++;
+    }
+    //console.log(this.pastTempArray);
+  }
+
+  fillFakeDataInHumPastArray() {
+    var hum = 3;
+    var string = "";
+    var json = null;
+    for (let index = 0; index < 10; index++) {
+      //console.log("index",index);
+      string = '{"hum": "' + hum + '"}';
+      json = JSON.parse(string);
+      this.pastHumArray.push(json);
+      hum++;
+    }
+    //console.log(this.pastHumArray);
   }
 }

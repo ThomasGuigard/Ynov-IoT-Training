@@ -5,15 +5,15 @@ import { Injectable } from '@angular/core';
 })
 export class AlarmService {
 
-  ledState : any = null;
-  speed : any = null;
-  isAlertActivated : boolean = false;
+  ledState: any = null;
+  speed: any = null;
+  isAlertActivated: boolean = false;
   constructor() { }
 
-  setAlert(){
-    if(this.isAlertActivated){
+  setAlert() {
+    if (this.isAlertActivated) {
       this.isAlertActivated = false;
-    }else{
+    } else {
       this.isAlertActivated = true;
     }
   }
