@@ -196,10 +196,10 @@ export class Tab1Page {
       vf = vf * 3, 6;//convert in km/h
       this.speed = vf.toFixed(2);
       this.alarm.speed = this.speed;
-      console.log('vitesse avant test :', this.alarm.speed);
+      //console.log('vitesse avant test :', this.alarm.speed);
       if (this.alarm.speed > 15 && this.ledState === 1) {
         this.alarm.isAlertActivated = true;
-        console.log('alert active :', this.alarm.isAlertActivated);
+        //console.log('alert active :', this.alarm.isAlertActivated);
       }
     }
   }
@@ -224,6 +224,17 @@ export class Tab1Page {
       }
     };
     this.router.navigate(['temperature'], navigationExtras);
+  }
+
+  openHeightPage() {
+    //this.fillFakeDataInTempPastArray();
+    //console.log(this.pastTempArray);
+    let navigationExtras: NavigationExtras = {
+      queryParams: {
+        special: JSON.stringify(this.pastAccArray)
+      }
+    };
+    this.router.navigate(['height'], navigationExtras);
   }
 
   openHumidityPage() {

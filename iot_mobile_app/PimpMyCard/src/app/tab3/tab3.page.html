@@ -23,7 +23,7 @@
     </ion-row>
 
     <ion-item>
-      <ion-label>Mode Alerte</ion-label>
+      <ion-label>Mode Alarme</ion-label>
       <ion-toggle #alarmButton [(ngModel)]="ledStatus" (click)="SetLedState()" [disabled]="isAlarmButtonDisabled">
       </ion-toggle>
     </ion-item>
@@ -38,21 +38,17 @@
       <ion-toggle [(ngModel)]="LiveButton" (click)="openCloseDoors()"></ion-toggle>
     </ion-item>
     <ion-item>
-      <ion-label>Changer le statut de la LED</ion-label>
-      <ion-toggle [(ngModel)]="LedButton" (click)="SetLedState()"></ion-toggle>
-    </ion-item>
-    <ion-item>
       <ion-label fixed>Date de début : </ion-label>
       <ion-datetime [(ngModel)]="HeureDebut" displayFormat="HH:mm" value="15:03" style="width: 33%;text-align: right;">
       </ion-datetime>
-      <ion-datetime [(ngModel)]="DateDebut" value="2019-05-10" style="width: 33%;text-align: right;">
+      <ion-datetime [(ngModel)]="DateDebut"  style="width: 33%;text-align: right;">
       </ion-datetime>
     </ion-item>
     <ion-item>
       <ion-label fixed>Date de fin : </ion-label>
       <ion-datetime [(ngModel)]="HeureFin" displayFormat="HH:mm" value="17:03" style="width: 33%;text-align: right;">
       </ion-datetime>
-      <ion-datetime [(ngModel)]="DateFin" value="2019-05-10" style="width: 33%;text-align: right;"></ion-datetime>
+      <ion-datetime [(ngModel)]="DateFin"  style="width: 33%;text-align: right;"></ion-datetime>
     </ion-item>
     <ion-item>
       <ion-button (click)="getDateDebutFin()" style="width: 100%;">Afficher les images stockées </ion-button>

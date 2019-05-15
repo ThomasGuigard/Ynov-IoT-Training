@@ -39,7 +39,6 @@ export class Tab3Page {
   }
 
   ngOnInit() {
-
     this.httpClient.get('http://192.168.43.136:1880/getDoorsState', {}).subscribe((data: any) => {
       if (data.payload.status === 0) {
         this.doorState = false;
@@ -49,6 +48,7 @@ export class Tab3Page {
         //console.log("doorState : ",this.doorState);
       }
       this.isDoorButtonDisabled = false;
+      //console.log(this.doorState);
       //console.log(this.pastTempArray);
     }, (error) => {
       console.log(error.status);
@@ -108,7 +108,7 @@ export class Tab3Page {
 
   setDoorState() {
     this.websocketService.socketDoors.send(JSON.stringify({
-      status: 0
+      status: !this.doorState
     }));
   }
 
@@ -138,8 +138,8 @@ export class Tab3Page {
     DateFinObj.setHours(HeureFinObj.getHours(), HeureFinObj.getMinutes());
     let datedeb: string;
     let datefin: string;
-    datedeb = this.toTimestamp(DateDebutObj).toString().replace(".", "");
-    datefin = this.toTimestamp(DateFinObj).toString().replace(".", "");
+    datedeb = this.toTimestamp(this.DateDebut).toString().replace(".", "");
+    datefin = this.toTimestamp(this.DateFin).toString().replace(".", "");
     //console.log("http://192.168.43.136:1880/getpictures?dateMax=" + datefin + "&dateMin=" + datedeb + "&ledState=1");
     this.httpClient.get("http://192.168.43.136:1880/getpictures?dateMax=" + datefin + "&dateMin=" + datedeb + "&ledState=1", {}).subscribe((data) => {
       this.items = data;

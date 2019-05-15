@@ -26,6 +26,7 @@ export class WebsocketService {
     this.socketLedwrite = new WebSocket("ws://" + this.serverIp + ":1880/getStatus");
     this.socketLocalisation = new WebSocket("ws://" + this.serverIp + ":1880/localisation");
     this.socketpictures = new WebSocket("ws://" + this.serverIp + ":1880/getPictures");
+    this.socketDoors = new WebSocket("ws://"+ this.serverIp + ":1880/setDoorsState");
     //console.log("ws://" + this.serverIp + ":1880/temp");
   }
 }
